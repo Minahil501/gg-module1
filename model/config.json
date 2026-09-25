@@ -30,6 +30,6 @@
     "min_brightness": 53.7,
     "max_brightness": 185.7
   },
-  "crop_filtered_threshold": 0.8,
-  "crop_mismatch_threshold": 0.5
+  "crop_filtered_threshold": 0.35,
+  "crop_mismatch_threshold": 1.01
 }

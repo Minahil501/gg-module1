@@ -99,11 +99,49 @@ Understanding this matters, because `confidence` means something different in ea
 otherwise `uncertain`. `confidence` is the raw model probability.
 
 **`crop` sent and the model agrees.** Probabilities are restricted to that crop's classes and
-**renormalised to sum to 1**, then the top class must reach **0.80**
+**renormalised to sum to 1**, then the top class must reach **0.35**
 (`crop_filtered_threshold`). ⚠️ `confidence` here is a *within-crop* share, not the raw
 probability — a class the model gave 0.30 to can be reported at 0.95 once its 6 crop-mates are
-removed. The higher 0.80 threshold exists to offset this. Treat confidence as comparable only
-against other responses from the same branch.
+removed. Treat confidence as comparable only against other responses from the same branch.
+
+> ## 🚩 `prediction` alone is wrong 1 time in 3. Show `top3`.
+>
+> This threshold is set low **on purpose**, so the service answers rather than abstains.
+> Measured on 528 web-sourced photos with the crop supplied:
+>
+> | | |
+> |---|---|
+> | answers given (not `uncertain`) | **86%** |
+> | `prediction` (top-1) is correct | **63%** |
+> | the true disease is somewhere in `top3` | **88%** |
+>
+> So the single best guess is wrong on roughly **1 answer in 3**, while the three-item list
+> contains the right disease **almost 9 times in 10**. The list is the product; the top-1 is
+> not trustworthy on its own.
+>
+> **The frontend must show all three as ranked possibilities**, not `prediction` as a verdict.
+> Something like "most likely X, but it could be Y or Z — confirm before spraying". Rendering
+> only `prediction` would put a wrong disease in front of a farmer a third of the time, and no
+> threshold setting available here changes that.
+>
+> `top3` is **not equally meaningful for every crop**, because it is 3 items drawn from a
+> different number of classes each time:
+>
+> | crop | classes | top-3 accuracy | by chance alone | worth showing? |
+> |---|---|---|---|---|
+> | potato | 3 | 100% | 100% | **no — it lists every potato class** |
+> | maize | 4 | 96% | 75% | marginal |
+> | cotton | 4 | 93% | 75% | marginal |
+> | sugarcane | 5 | 92% | 60% | yes |
+> | tomato | 9 | 80% | 33% | yes |
+> | wheat | 9 | 59% | 33% | yes |
+> | rice | 6 | 62% | 50% | **barely better than chance** |
+>
+> For potato, showing 3 of 3 classes conveys nothing — show only `prediction` (77% correct)
+> for that crop. For rice, neither the top-1 (34%) nor the top-3 (62%, against 50% by chance)
+> carries much signal; consider not offering rice until the model is retrained.
+>
+> Raw per-photo data for every configuration is in `test_results/`.
 
 **`crop` sent and the model disagrees.** If the model's best crop is not the one sent *and*
 that crop holds at least **0.50** of the total probability mass (`crop_mismatch_threshold`),

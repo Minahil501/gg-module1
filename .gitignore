@@ -9,3 +9,10 @@ venv/
 
 # Superseded Module 1 drafts, kept on the AI team's machine only.
 _archive_old_module1/
+
+# Test image sets are large and not ours to redistribute; test_results/ holds
+# the measurements they produced, which is what actually needs versioning.
+*.zip
+
+# Superseded duplicate of t080_crop.csv; locked by an editor at commit time.
+test_results/withcrop.csv

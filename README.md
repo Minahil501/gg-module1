@@ -24,8 +24,8 @@ and the top 3 candidates.
 - **Coverage:** 40 classes across 7 Pakistani field crops — wheat, rice, cotton, maize,
   sugarcane, tomato, potato. Full list: `model/labels.json`, or `GET /v1/classes`.
 - **Safety behaviour:** rather than guessing, the API returns `status: "uncertain"` with a
-  farmer-facing message when confidence is low, the photo is blurry/dark/overexposed, or
-  the photo does not appear to show the crop the farmer selected.
+  farmer-facing message when confidence falls below the configured threshold. Blur, low light
+  and overexposure are reported as `warnings` but do not by themselves force `uncertain`.
 
 ### What it does NOT do
 
@@ -40,7 +40,7 @@ This is important, because earlier drafts of this module promised more:
 
 ⚠️ **This diverges from `REST_API_SPEC.md` Section 9 → AI Module 1**, which still documents a
 three-part `{disease, nutrient_deficiency, insect}` response. See
-[§8 Known contract gaps](#8-known-contract-gaps) — that gap needs a PM decision, it is not
+[§9 Known contract gaps](#9-known-contract-gaps) — that gap needs a PM decision, it is not
 something the backend team can paper over.
 
 ## 2. Folder structure
@@ -51,22 +51,30 @@ Disease_Module/
 ├── predict.py              # Validation → normalisation → quality → model → postprocess
 ├── client_example.py       # Copy-paste example call for the backend team
 ├── model/
-│   ├── model.onnx          # EfficientNet-B0 weights (16 MB, Git LFS)
+│   ├── model.onnx          # EfficientNet-B0 weights (16 MB, plain binary)
 │   ├── labels.json         # 40 class ids, index order = model output order
 │   └── config.json         # Preprocessing + all decision thresholds (calibrated)
 ├── tests/
 │   └── test_api.py         # contract + edge-case tests (skipped if model/ absent)
+├── tools/
+│   ├── test_zip.py         # batch-test the model on a zip/folder of labelled photos
+│   └── build_report.py     # render the evaluation report PDF from measured stats
+├── test_results/           # per-photo measurements for each threshold tried
+├── docs/
+│   └── EVALUATION_REPORT.pdf   # ← read this before trusting the model
 ├── API_CONTRACT.md         # ← the document the backend team integrates against
 ├── Dockerfile
 ├── requirements.txt
 ├── .env.example
-├── .gitattributes          # model.onnx tracked with Git LFS
-└── _archive_old_module1/   # superseded drafts — see §9, safe to delete
+├── .gitattributes          # keeps model/ bytes exact (no LFS — see the file)
+└── _archive_old_module1/   # superseded drafts — see §10, safe to delete
 ```
 
 **Do not change thresholds in code.** Confidence, crop-filter, crop-mismatch and image-quality
-thresholds all live in `model/config.json` and were calibrated on a validation set. `predict.py`
-reads every one of them from there.
+thresholds all live in `model/config.json`, and `predict.py` reads every one of them from there.
+The two decision thresholds were re-tuned on the 528-photo set described in §5 — see
+`docs/EVALUATION_REPORT.pdf` §6 for what each value was changed to and why. The crop-mismatch
+check is **switched off**: the farmer's crop selection is authoritative.
 
 ## 3. Run it locally
 
@@ -85,7 +93,7 @@ uvicorn app:app --port 7860
 Then open http://localhost:7860/docs.
 
 Without `GREENGUARD_API_KEY` set, the API-key check is **disabled** and the service logs a
-warning — convenient locally, dangerous in production (§8).
+warning — convenient locally, dangerous in production (§9).
 
 ## 4. Tests
 
@@ -94,18 +102,45 @@ pip install pytest httpx
 pytest -q
 ```
 
-18 test functions, 28 collected cases (two are parametrised). **Not yet run in this
-environment** — `onnxruntime` and `pytest` are not installed here, so treat the suite as
-unverified until someone runs it on a machine with the dependencies.
+18 test functions, 28 collected cases (two are parametrised). **28 passed** as of the last
+run, against the real `model/model.onnx`.
 
 The whole module skips itself if `model/model.onnx` is missing, so a green run with no model is
-not a pass — check the output says 28 passed, not 28 skipped.
+not a pass — check the output says 28 passed, not 28 skipped. Run `pytest tests/` rather than
+bare `pytest`, or it will also try to collect the superseded suite in `_archive_old_module1/`.
 
 They cover: health, auth, crop normalisation (`corn`→maize, `paddy`→rice), invalid crop,
 missing/empty/corrupt/truncated files, size limits, colour modes and formats, HEIC, EXIF
 rotation invariance, and the blur/low-light warnings.
 
-## 5. Deploy on Hugging Face Spaces
+## 5. How well does it actually work?
+
+**Read `docs/EVALUATION_REPORT.pdf` before promising anything to anyone.** Summary, measured on
+528 web-sourced photographs with the crop supplied:
+
+| | |
+|---|---|
+| service answers rather than abstaining | 86% |
+| its single best guess is correct | **63%** |
+| the correct disease is somewhere in `top3` | **88%** |
+
+The shortlist is the product. The single `prediction` is wrong on roughly one answer in three,
+so the interface must show all three ranked possibilities — see the red-flag block in
+`API_CONTRACT.md`.
+
+Accuracy is very uneven by crop. Potato (77%), cotton (73%) and maize (73%) are usable;
+**rice and wheat are 34%**, close to guesswork, and should not be offered to farmers until the
+model is retrained. Healthy leaves were not tested at all, so the false-alarm rate on a healthy
+plant is unknown — the report lists that as the largest open risk.
+
+Re-run it yourself on any labelled zip:
+
+```bash
+venv/Scripts/python tools/test_zip.py --zip <your-set>.zip --send-crop
+venv/Scripts/python tools/build_report.py test_results/stats.json docs/EVALUATION_REPORT.pdf
+```
+
+## 6. Deploy on Hugging Face Spaces
 
 1. huggingface.co → **New Space** → SDK **Docker** (blank template) → hardware **CPU basic
    (free)** → visibility **Public**. The API key protects it; a private Space would also
@@ -117,7 +152,7 @@ rotation invariance, and the blur/low-light warnings.
 4. Watch the Logs tab until it says *Running*, then check
    `https://<user>-<space>.hf.space/health`.
 
-## 6. Deploy on Render (free alternative)
+## 7. Deploy on Render (free alternative)
 
 1. Push this folder (with `model/` files) to a GitHub repo — private is fine.
 2. render.com → **New → Web Service** → connect the repo → Runtime **Docker** → Instance **Free**.
@@ -126,7 +161,7 @@ rotation invariance, and the blur/low-light warnings.
 4. Advanced → Health check path: `/health` → **Deploy**.
 5. URL: `https://<service-name>.onrender.com`. Free instances spin down after ~15 min idle.
 
-## 7. Integrating
+## 8. Integrating
 
 Read **`API_CONTRACT.md`** — it is the authoritative request/response document, and it is
 written for the backend team rather than for us.
@@ -144,7 +179,7 @@ curl -X POST "https://<user>-<space>.hf.space/v1/predict" \
 Use a 60 s timeout, retry once on timeout or 503, and call `/health` when the farmer opens the
 app so the Space is awake by the time they photograph a leaf.
 
-## 8. Known contract gaps
+## 9. Known contract gaps
 
 These are open issues, not bugs to fix quietly. They need decisions from the PM / backend team.
 
@@ -169,7 +204,7 @@ These are open issues, not bugs to fix quietly. They need decisions from the PM 
    include `Disease_Module/`, so none of this is committed. It must be added to the whitelist
    before handover, together with Git LFS for `model.onnx` (16 MB).
 
-## 9. `_archive_old_module1/`
+## 10. `_archive_old_module1/`
 
 Three superseded attempts at this module, kept only so nothing is lost:
 
