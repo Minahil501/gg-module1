@@ -1,0 +1,11 @@
+# Never commit the real key -- .env.example is the template, .env is the secret.
+.env
+
+__pycache__/
+*.pyc
+.pytest_cache/
+venv/
+.venv/
+
+# Superseded Module 1 drafts, kept on the AI team's machine only.
+_archive_old_module1/

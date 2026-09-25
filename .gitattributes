@@ -1,1 +1,6 @@
-*.onnx filter=lfs diff=lfs merge=lfs -text
+# model.onnx is 16 MB -- well under GitHub's limit, so it is stored as an
+# ordinary binary blob, not Git LFS. An LFS declaration here would be a lie:
+# the file was first committed raw via the GitHub web uploader, which does not
+# run LFS filters, and mixing the two breaks `git clone` for anyone without LFS.
+model/** -text
+*.onnx binary
