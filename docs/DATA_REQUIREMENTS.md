@@ -1,255 +1,289 @@
-# Data requirements — wheat & rice specialist model
+# Data specification — wheat and rice disease models
 
-**For:** whoever sources or photographs the images.
-**Purpose:** the wheat and rice classes in the current model do not work in the field. This
-document says exactly what data would fix that, and what data would waste your time.
+**For:** whoever sources, shoots or labels the images.
+**Scope:** two independent models, one per crop. The farmer selects the crop in the app before
+photographing, so neither model ever has to tell wheat from rice. Each only has to separate the
+diseases *within* its own crop.
 
----
-
-## 1. Why this is needed
-
-The shipped model scores **97% on its own test set and 34% on real photographs** for both wheat
-and rice. That gap is not bad luck and it is not a shortage of images — rice has ~420 images per
-class, more than cotton, which works fine.
-
-The cause is that **every rice class came from one source folder, and that folder was already
-augmented.** Zoomed, rotated and colour-shifted copies of the same leaf ended up in both the
-training and the test split, because duplicate-detection cannot see through those changes. The
-model learned *"photographs that look like that collection"* rather than *"what the disease looks
-like"*, and the test set rewarded it for doing so.
-
-The clearest symptom: `wheat_leaf_blight` scores **F1 = 1.00** on the held-out test and was
-predicted **zero times** across 80 real wheat photographs. A disease cannot be both perfectly
-learned and completely unrecognisable. What was learned was the dataset, not the disease.
-
-**Everything below follows from that one failure.** The single most important rule is rule 1.
+Build the dataset to this specification and the model follows. Skip §3 and no amount of training
+will help.
 
 ---
 
-## 2. What the specialist will cover
+## 1. Decide the class list first
 
-The farmer selects the crop before photographing, so this model only ever has to separate
-diseases *within* one cereal. Target class list:
+Every class costs data — roughly 600 images — so a class earns its place or it is dropped. Three
+tests, all of which must pass:
 
-| Crop | Classes |
+**a. Is it visible on a leaf?**
+The farmer photographs a leaf. A disease of the grain, the head, the stem base or the root
+cannot appear in that photograph, and a model asked to diagnose one can only guess. Exclude
+those outright, however economically important they are. They need a different product.
+
+**b. Is it economically worth diagnosing here?**
+Prioritise what actually costs Pakistani farmers yield. A disease that is rare locally is not
+worth 600 images and a slot in the class list.
+
+**c. Can a trained human tell it apart from the others from a single photograph?**
+If an agronomist needs a lab test, a hand lens, or a look at the whole plant, the model will not
+manage from one phone picture. Either merge it with a look-alike class or drop it.
+
+### Proposed starting lists
+
+**Confirm both with an agronomist before collecting anything.** These are a starting point based
+on leaf visibility and general prevalence, not a final agronomic judgement.
+
+**Wheat**
+
+| Class | Notes |
 |---|---|
-| Wheat | yellow rust, brown rust, septoria, powdery mildew, blast, healthy |
-| Rice | bacterial blight, brown spot, leaf blast, leaf scald, sheath blight, healthy |
+| yellow (stripe) rust | Usually the priority wheat disease in Pakistan |
+| brown (leaf) rust | Confirm it is separable from yellow rust in photographs |
+| powdery mildew | Distinctive white growth; usually easy |
+| septoria / leaf blotch | Confirm whether septoria and spot blotch are one class or two |
+| healthy | |
 
-**Deliberately excluded — do not collect these:**
+**Rice**
 
-| Class | Why |
+| Class | Notes |
 |---|---|
-| wheat black point | Affects the **grain**. Not visible on a leaf. Already suppressed in the live service. |
-| wheat fusarium foot rot | Affects the **stem base**. Not visible on a leaf. Already suppressed. |
+| bacterial leaf blight | Major in Pakistan |
+| leaf blast | |
+| brown spot | |
+| narrow brown leaf spot | Confirm it is separable from brown spot; merge if not |
+| healthy | |
 
-**Verify with an agronomist before collecting** (see §8): `wheat leaf blight` and
-`rice sheath blight`.
+**Ask the agronomist these specifically:**
+
+- Which wheat and rice diseases appear on the **leaf blade**, as opposed to the sheath, stem,
+  head or grain? Anything not on the blade is excluded.
+- **Sheath diseases** (rice sheath blight, for example) — will a farmer photographing a leaf
+  blade actually capture it? If not, it is excluded on the same grounds.
+- Which pairs **look alike in a photograph**? Merge them into one class rather than asking the
+  model to split what a human cannot.
+- Are there diseases missing from these lists that matter more than anything on them?
+
+**Start with 5 or 6 classes per crop, not 9.** Fewer classes with 600 good images each beats
+more classes with 150. You can add classes later; you cannot un-spend a season of collection.
 
 ---
 
-## 3. The three rules that matter most
+## 2. How many images
 
-### Rule 1 — Every class needs at least two independent sources
+Counts are of **real, distinct** photographs — after de-duplication, before any augmentation.
 
-This is the rule that was broken, and it is worth more than any other on this page.
-
-"Independent" means genuinely different origin: a different dataset, a different field, a
-different season, a different photographer. Not a different folder in the same download.
-
-- **Minimum: 2 sources per class.** Target 3.
-- **No single source may supply more than 60% of a class.**
-- If a class can only be obtained from one source, **it cannot be validated** — its accuracy
-  is unmeasurable, and it should not be offered to farmers.
-
-Without this, you cannot build an honest test set, and the model has no reason to learn the
-disease rather than the photo style.
-
-### Rule 2 — Original images only. Never pre-augmented.
-
-Reject any dataset whose folders are named `_AUG`, `augmented`, `rotated`, `enhanced`, or which
-contains obvious near-copies of the same leaf. If a set has both an original and an augmented
-version, **take the original**.
-
-Augmentation belongs in the training pipeline, where it is applied after the split and cannot
-leak across it. Augmentation baked into the files on disk defeats every duplicate check and is
-precisely what broke rice.
-
-### Rule 3 — Field photographs, not laboratory photographs
-
-A detached leaf on a white sheet teaches the model nothing that survives contact with a farmer's
-phone. Required properties:
-
-| Property | Required |
+| | Per class |
 |---|---|
-| Camera | Phone camera, including low-end handsets |
-| Leaf | **Attached to the living plant** |
-| Background | Cluttered — soil, other leaves, stems, sky, hands |
-| Lighting | Natural daylight; vary morning / midday / overcast |
-| Distance | Mixed: close-ups of lesions *and* whole-leaf framing |
-| Severity | Early, mid and late stage of the same disease |
-| Angle | Varied, including slightly off-centre and tilted |
+| Absolute minimum | **300** |
+| Target | **600** |
+| Comfortable | **800+** |
 
-At least **60% of every class must be field photographs.** Laboratory images may make up the
-remainder, no more.
+**Balance matters as much as the total.** No class should have fewer than half the images of the
+largest class in the same crop. A four-fold imbalance means the small classes get ignored, and
+those are usually the ones you most wanted.
 
----
-
-## 4. How many images
-
-Counts are of **real, distinct** photographs — after removing duplicates, before any
-augmentation.
-
-| | Per class | Notes |
-|---|---|---|
-| Absolute minimum | **300** | below this a class is not trainable to a useful standard |
-| Target | **600** | |
-| Comfortable | **800+** | |
-
-Additional constraints:
-
-- **Balance across classes matters more than raw totals.** No class should have fewer than half
-  the images of the largest class in the same crop. Current wheat runs 90 to 390 — over
-  four-fold, and the smallest classes are the weakest performers.
-- **Priority classes**, currently the thinnest or worst-performing:
-
-| Class | Have | Need | Why |
-|---|---|---|---|
-| wheat brown rust | 90 | +400 | smallest wheat class |
-| wheat powdery mildew | 113 | +400 | weakest working wheat class (30%) |
-| wheat leaf blight | 199 | replace entirely | 0% in the field; see §8 |
-| wheat blast | 163 | +300 | thin |
-| **all six rice classes** | ~420 each | **+300 each, from a different source** | single-source; count is not the problem, origin is |
-
-For rice the instruction is **not "collect more"** — it is "collect *elsewhere*". Another 400
-images from the same folder would change nothing.
+For 6 classes per crop at the target, that is roughly **3,600 images per crop, 7,200 in total.**
+Plan the collection around that number.
 
 ---
 
-## 5. Healthy leaves are not optional
+## 3. Every class needs at least two independent sources
 
-Both crops need a healthy class collected under **identical conditions** to the diseased ones —
-same fields, same phones, same lighting, same photographers.
+**This is the rule that decides whether the project works.** If you follow nothing else here,
+follow this.
 
-If healthy images come from a different source than the diseased ones, the model learns to spot
-the source rather than the health of the plant, and will call any unfamiliar photograph
-diseased.
+"Independent" means a genuinely different origin — a different district, a different season, a
+different photographer, a different dataset. Not a different folder in the same download.
 
-**Target: 600 healthy images per crop, from at least 2 sources.**
+- **Minimum 2 sources per class. Target 3.**
+- **No single source may supply more than 60% of any class.**
 
-This matters more than it looks. The current model has never been tested on a healthy leaf at
-all, so how often it tells a farmer their healthy plant is diseased is completely unknown — and
-that is the most damaging mistake this product can make.
+Why it matters: with one source, every image of a disease shares the same camera, the same
+lighting, the same background, the same framing. The model learns that shared style instead of
+the disease — it is a far easier pattern to find — and then fails completely on any photograph
+taken elsewhere. You cannot detect this from the training metrics, because your test set has the
+same style. The accuracy looks excellent right up until a farmer uses it.
+
+**A class with only one source cannot be validated.** Its accuracy is unmeasurable at any point
+in the project. Do not ship it.
+
+---
+
+## 4. Original images only
+
+Reject any source whose folders are named `_AUG`, `augmented`, `rotated`, `enhanced`, or which
+plainly contains near-copies of the same leaf. If a set offers both an original and an augmented
+version, take the original.
+
+Augmentation belongs in the training code, applied after the data is split. Augmented copies
+sitting in the files on disk defeat every duplicate check — rotation and colour shifts change an
+image enough that hashing no longer matches it — so copies of one leaf end up on both sides of
+your split. The model then scores brilliantly on images it has effectively already seen.
+
+---
+
+## 5. What each photograph must look like
+
+The model will be used on a farmer's phone, in a field, in daylight. Train it on that.
+
+| Property | Requirement |
+|---|---|
+| Camera | Phone cameras, including cheap handsets. Not DSLRs. |
+| Leaf | **Attached to the living plant** — never detached on paper or a white sheet |
+| Background | Cluttered and natural: soil, other leaves, stems, sky, hands |
+| Lighting | Natural daylight. Vary it: morning, midday, overcast, light shade |
+| Distance | Mixed — close-ups of lesions **and** whole-leaf framing |
+| Severity | Early, mid and late stage of each disease |
+| Angle | Varied, including tilted and slightly off-centre |
+| Focus | Mostly sharp, but keep some imperfect shots — farmers take those |
+
+**At least 60% of every class must be field photographs.** Laboratory or studio images may make
+up the rest, no more.
+
+Do not collect only textbook-perfect examples. A model trained on ideal photographs answers
+confidently and wrongly on ordinary ones.
+
+### Field shooting protocol
+
+For each diseased plant found:
+
+1. One whole-leaf shot, leaf filling most of the frame
+2. One close-up of the lesions
+3. One shot from a different angle or in different light
+4. Record the `group_id` (§6) so all three stay together
+
+Three shots per plant, from many plants, beats thirty shots of one plant.
 
 ---
 
 ## 6. Record this for every image
 
-Without these fields a correct train/test split is impossible. A single CSV alongside the images
-is enough.
+Without these fields a correct split is impossible. One CSV alongside the images is enough.
 
-| Field | Why it is needed |
+| Field | Why |
 |---|---|
-| `source` | Dataset name or collection batch. **The split is grouped on this.** |
-| `group_id` | Identifies the same leaf / plant / session. Several photographs of one leaf must never be split across train and test. |
+| `source` | District, batch or dataset name. **The split is grouped on this.** |
+| `group_id` | Identifies one plant or one photo session. Several shots of the same leaf must never be split across train and test. |
 | `crop` | wheat or rice |
-| `disease` | class label |
-| `label_verified_by` | who confirmed it, and how (see §8) |
+| `disease` | the class label |
+| `label_verified_by` | who confirmed it, and how |
 | `date` | collection date |
-| `location` | district or coordinates, where known |
-| `severity` | early / mid / late, if assessable |
+| `location` | district, or coordinates if available |
+| `severity` | early / mid / late |
 
-`source` and `group_id` are the two that cannot be reconstructed later. Capture them at
-collection time or they are lost.
-
----
-
-## 7. A separate field test set
-
-Hold back a test set **collected independently** of all training data — different fields or a
-different season, never used for training or for choosing a model.
-
-- **50–100 images per class.**
-- Field conditions, phone cameras, exactly as §3.
-- Never used for tuning anything. Measured once per candidate model.
-
-This is the only number that will predict real performance. Expect it to read far lower than
-your current 97%, and treat that as the measurement working rather than the model failing.
-
-The existing `named.zip` (508 web photographs) can serve as an interim benchmark, but it is
-web-sourced rather than farmer-sourced and contains no healthy leaves.
+`source` and `group_id` cannot be reconstructed afterwards. Capture them at collection time or
+they are gone permanently.
 
 ---
 
-## 8. Verify these with an agronomist before spending money
+## 7. Labelling
 
-**`wheat leaf blight` — 199 images, perfect on the held-out test, predicted zero times in the
-field.** Before collecting a single new image, open 20 of the existing ones and have someone
-qualified confirm they show wheat leaf blight at all. A whole class scoring 0% in the wild very
-often means the label is wrong, not that the model is weak. This is a ten-minute check that may
-save weeks.
+A wrong label is worse than a missing image: it teaches the model something false and then
+punishes it at test time for being right.
 
-**`rice sheath blight` — check it is diagnosable from a leaf photograph.** Sheath blight begins
-on the leaf *sheath* and spreads to the blade. If a farmer photographing a leaf blade will
-usually miss it, it belongs with wheat black point in the excluded list — a disease the model
-can only ever guess at. Note that the current model over-predicts this class heavily: it
-answered "sheath blight" 34 times out of 65 rice photographs.
-
-**Confirm the split between `wheat blast` and `rice leaf blast`.** Both are caused by related
-*Magnaporthe* pathogens and can look alike; since the crop is always supplied, they never
-compete, but their labels should still be consistent.
+- Every class must be confirmed by someone qualified — an agronomist or plant pathologist.
+- Have a **second person independently re-label a 10% sample.** If they disagree with the first
+  labeller on more than 1 in 10, stop and resolve it before collecting more.
+- Record who verified each image in `label_verified_by`.
+- If a photograph is ambiguous, **discard it.** Do not guess. An uncertain label pollutes both
+  training and evaluation.
+- Watch for whole classes that a labeller found difficult — that is a sign the class fails test
+  (c) in §1 and should be merged or dropped.
 
 ---
 
-## 9. Sources worth investigating
+## 8. Splitting the data
 
-**Verify each yourself before relying on it** — licence, provenance, and whether the images are
-originals rather than augmented copies.
+**Group the split by `source` and `group_id`. Never split randomly.**
 
-| Crop | Worth checking |
-|---|---|
-| Rice | Mendeley *Rice Leaf Disease Image Samples* (Sethy et al.); *Dhan-Shomadhan* (Bangladeshi field rice) |
-| Wheat | CGIAR wheat rust dataset (Zindi / ICLR crop-disease challenge) — field photography of rust |
-| Both | PlantDoc — field images, already partly in use |
+A random split puts different photographs of the same leaf, and photographs sharing a style, on
+both sides. The test score then measures recall of things already seen, and reads far higher
+than reality — typically by tens of points.
 
-**Your own field collection is worth more than any of these.** Images from Pakistani fields, on
-the handsets farmers actually own, match deployment conditions exactly — which is the entire
-problem this document exists to solve. A single season of collection across a few districts
-would outweigh every dataset listed above.
+Suggested: 70% train, 15% validation, 15% test, **allocated by group, not by image**. All
+photographs sharing a `group_id` go to the same side. Where a class has enough sources, hold
+back an entire source for testing.
 
 ---
 
-## 10. Checklist before training
+## 9. Hold back a real test set
 
-- [ ] Every class has ≥2 independent sources, none supplying >60%
-- [ ] No pre-augmented images anywhere in the training data
-- [ ] ≥300 real images per class; ≥60% field conditions
-- [ ] Healthy class for both crops, same conditions as the diseased classes
+Collect a test set **independently** of everything used for training — a different district, a
+different season, ideally a different photographer.
+
+- **50–100 images per class**
+- Field conditions and phone cameras, exactly as §5
+- Includes healthy leaves
+- Never used for training, tuning, early stopping, or choosing between models. Measured once per
+  candidate.
+
+This is the only number that predicts field performance. It will read lower than your validation
+score. That is the measurement working correctly, not the model failing — and a lower honest
+number is worth more than a higher dishonest one.
+
+---
+
+## 10. Healthy leaves
+
+Both models need a healthy class, and it has a trap: collect it **under identical conditions to
+the diseased classes.** Same districts, same phones, same photographers, same season.
+
+If healthy images come from somewhere else, the model learns to recognise that source rather
+than the health of the plant, and will call every unfamiliar photograph diseased.
+
+**Target 600 healthy images per crop, from at least 2 sources.**
+
+Then measure the false-alarm rate on healthy plants explicitly. Telling a farmer their healthy
+crop is diseased costs them money on spray they never needed, and costs you their trust — it is
+the most damaging mistake this product can make.
+
+---
+
+## 11. Optional but valuable: a rejection set
+
+Collect **200–300 photographs that are not a diseased leaf of the target crop**: soil, hands,
+sky, other plants, blurred nothing, indoor scenes.
+
+Farmers will photograph these. Without them the model has no concept of "this is not a leaf" and
+will answer confidently anyway. Use them either as an explicit "not a leaf" class or as a
+calibration set for the confidence threshold.
+
+---
+
+## 12. Checklist before training
+
+- [ ] Class list confirmed with an agronomist; every class visible on a leaf blade
+- [ ] 5–6 classes per crop, not more
+- [ ] ≥300 real images per class, 600 target
+- [ ] **≥2 independent sources per class, none over 60%**
+- [ ] No pre-augmented images anywhere
+- [ ] ≥60% field conditions, phone cameras, leaf attached to the plant
+- [ ] Healthy class collected under the same conditions as the diseased ones
 - [ ] `source` and `group_id` recorded for every image
-- [ ] Split grouped by `source` and `group_id` — **never random**
+- [ ] 10% of labels independently re-checked, disagreement under 10%
+- [ ] Split grouped by `source` and `group_id` — never random
 - [ ] Independent field test set held back, 50–100 per class
-- [ ] `wheat leaf blight` labels checked by an agronomist
-- [ ] `rice sheath blight` confirmed diagnosable from a leaf photograph
-- [ ] wheat black point and fusarium foot rot excluded
-
-If the first and last boxes are the only ones you manage, you will still be substantially ahead
-of where this model stands today.
+- [ ] Rejection set collected (optional)
 
 ---
 
-## 11. What "good" will look like
+## 13. What good looks like
 
-Do not expect 97% again. That number came from a test set measuring memorisation, and an honest
-test set will never produce it.
+Judge every number on the **held-out field test set** from §9, never on validation.
 
-Realistic targets on a proper field test set, against what the current model achieves:
+| Measure | Target |
+|---|---|
+| Top-1 accuracy, per crop | **65%+** |
+| Correct disease within the top 3 shown | **85%+** |
+| False alarms on healthy leaves | **under 10%** |
+| Weakest class | no class below 50% |
 
-| | Now | Target |
-|---|---|---|
-| Wheat top-1 | 42% | 65%+ |
-| Rice top-1 | 34% | 65%+ |
-| Correct disease in the top 3 | 63% / 62% | 85%+ |
+Two cautions when reading those:
 
-For comparison, maize and cotton reach 73% top-1 and 93–96% top-3 on the same web photographs —
-so those targets are what this data pipeline already achieves for crops that have more than one
-source. That is the bar, and it is reachable.
+**A top-3 score means little if the crop has few classes.** With 5 classes, showing 3 hits 60%
+by chance alone. Always compare the top-3 figure against `3 ÷ number of classes`, and judge the
+margin rather than the raw number.
+
+**If your test score is above 95%, something is wrong with the split.** Check for grouping
+failures and augmented duplicates before celebrating. An honest field score in the 60s or 70s is
+a working model; a 97% that came from a leaky split is not.
