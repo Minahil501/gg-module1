@@ -64,7 +64,8 @@ Disease_Module/
 │   └── build_report.py     # render the evaluation report PDF from measured stats
 ├── test_results/           # per-photo measurements for each threshold tried
 ├── docs/
-│   └── EVALUATION_REPORT.pdf   # ← read this before trusting the model
+│   ├── EVALUATION_REPORT.pdf   # ← read this before trusting the model
+│   └── DATA_REQUIREMENTS.md    # what data the wheat+rice retrain needs
 ├── API_CONTRACT.md         # ← the document the backend team integrates against
 ├── Dockerfile
 ├── requirements.txt
@@ -136,7 +137,8 @@ and never branch on `status` to decide whether to show it; that choice alone is 
 
 Accuracy is very uneven by crop. Potato (77%), cotton (73%) and maize (73%) are usable;
 wheat is 42% after suppressing its two non-leaf classes, and **rice is 34%** — close to
-guesswork, and should not be offered to farmers until the model is retrained. Healthy leaves were not tested at all, so the false-alarm rate on a healthy
+guesswork, and should not be offered to farmers until the model is retrained. What that retrain
+needs is spelled out in `docs/DATA_REQUIREMENTS.md`. Healthy leaves were not tested at all, so the false-alarm rate on a healthy
 plant is unknown — the report lists that as the largest open risk.
 
 Re-run it yourself on any labelled zip:
