@@ -225,11 +225,15 @@ def build(stats_path, out_path):
     f.append(Spacer(1, 6))
     f.append(callout(
         "Requirement on the application, not a suggestion",
-        "The interface must present all three ranked possibilities, never the single prediction as "
-        "a diagnosis. Displaying only the first guess would place an incorrect disease in front of "
-        "a farmer in roughly one case in three, with a treatment decision attached to it. Suggested "
-        "phrasing: &ldquo;most likely X; possibly Y or Z &mdash; confirm before treating&rdquo;.",
-        WARN))
+        "The interface must present all three ranked possibilities on <b>every</b> response, and "
+        "must never use <font face='Courier'>status</font> to decide whether to show them. The "
+        "shortlist is returned even when the service reports <font face='Courier'>uncertain</font> "
+        "and gives no single prediction, and <b>56% of those uncertain responses still contain the "
+        "correct disease</b>. Showing the shortlist only on confident responses costs 7 points "
+        "(77% against 84%); showing the single best guess alone costs 20 (64%). "
+        "<font face='Courier'>status</font> should change the wording &mdash; "
+        "&ldquo;most likely X&rdquo; against &ldquo;not sure from this photo; it may be X, Y or "
+        "Z&rdquo; &mdash; not the visibility.", WARN))
 
     # ---------------------------------------------------------------- config
     f.append(para("6. Configuration applied", "h1"))

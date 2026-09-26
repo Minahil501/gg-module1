@@ -121,14 +121,17 @@ rotation invariance, and the blur/low-light warnings.
 **Read `docs/EVALUATION_REPORT.pdf` before promising anything to anyone.** Summary, measured on
 508 web-sourced photographs with the crop supplied:
 
-| | |
+| what the app puts in front of the farmer | how often it contains the right disease |
 |---|---|
-| service answers rather than abstaining | 87% |
-| its single best guess is correct | **64%** |
-| the correct disease is somewhere in `top3` | **88%** |
+| `prediction` alone, when `status` is `ok` | 64% |
+| `top3`, but only when `status` is `ok` | 77% |
+| **`top3`, rendered on every response** | **84%** |
 
-The shortlist is the product. The single `prediction` is wrong on roughly one answer in three,
-so the interface must show all three ranked possibilities — see the red-flag block in
+The shortlist is the product. `top3` is returned on **every** response — including when
+`status` is `uncertain` and `prediction` is `null` — and 56% of those "uncertain" responses
+still have the right disease in the list. So the interface must render `top3` unconditionally
+and never branch on `status` to decide whether to show it; that choice alone is worth 7 points
+(77% → 84%). `status` should change the wording, not the visibility. See the red-flag block in
 `API_CONTRACT.md`.
 
 Accuracy is very uneven by crop. Potato (77%), cotton (73%) and maize (73%) are usable;

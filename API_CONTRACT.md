@@ -71,7 +71,8 @@ rotation is applied, transparency is flattened onto white, and 16-bit/float imag
 ```
 
 Every key above is present on **every** 200 response. `prediction` is the only one that may be
-`null`; `warnings` is always an array, `message` is `null` unless `status` is `uncertain`.
+`null`; `top3` is always populated, `warnings` is always an array, and `message` is `null`
+unless `status` is `uncertain`.
 
 ### Field meanings
 
@@ -79,7 +80,7 @@ Every key above is present on **every** 200 response. `prediction` is the only o
 |---|---|
 | `status` | `ok` = trust `prediction` · `uncertain` = ask the farmer to retake, show `message`; `top3` may still be shown as "possibly…" |
 | `prediction` | best class, or `null` when uncertain |
-| `top3` | up to 3 most likely classes, highest first. Restricted to the selected crop's classes when `crop` was sent; all 38 reportable classes otherwise |
+| `top3` | up to 3 most likely classes, highest first. **Always present, including when `status` is `uncertain`** — render it either way. Restricted to the selected crop's classes when `crop` was sent; all 38 reportable classes otherwise |
 | `crop_source` | `user` (a valid `crop` was sent) or `model` (no crop sent) |
 | `detected_crop` | the crop the model believes the leaf belongs to. **Always present**, including when `crop_source` is `user` — compare the two to see whether the model agreed |
 | `warnings` | any of `BLURRY_IMAGE`, `LOW_LIGHT`, `OVEREXPOSED`. (`CROP_MISMATCH` exists but cannot currently occur — see below.) |
@@ -104,38 +105,44 @@ otherwise `uncertain`. `confidence` is the raw model probability.
 probability — a class the model gave 0.30 to can be reported at 0.95 once its 6 crop-mates are
 removed. Treat confidence as comparable only against other responses from the same branch.
 
-> ## 🚩 `prediction` alone is wrong 1 time in 3. Show `top3`.
+> ## 🚩 Render `top3` on EVERY response. Never branch on `status` to decide whether to show it.
 >
-> This threshold is set low **on purpose**, so the service answers rather than abstains.
-> Measured on 508 web-sourced photos with the crop supplied:
+> `top3` is present on **every** 200 response, including when `status` is `uncertain` and
+> `prediction` is `null`. It is always drawn from the crop the farmer selected. Measured on 508
+> web-sourced photographs with the crop supplied:
 >
-> | | |
+> | what the app renders | how often the farmer sees the right disease |
 > |---|---|
-> | answers given (not `uncertain`) | **87%** |
-> | `prediction` (top-1) is correct | **64%** |
-> | the true disease is somewhere in `top3` | **88%** |
+> | `prediction` only, when `status == "ok"` | 64% |
+> | `top3`, only when `status == "ok"` | 77% |
+> | **`top3`, always** | **84%** |
 >
-> So the single best guess is wrong on roughly **1 answer in 3**, while the three-item list
-> contains the right disease **almost 9 times in 10**. The list is the product; the top-1 is
-> not trustworthy on its own.
+> That last row is 7 points better than the middle one for free, and it is purely a frontend
+> decision — no setting on this service changes it. Of the photographs the service marks
+> `uncertain`, **56% still have the correct disease in `top3`**. Discarding those is throwing
+> away more than half of a fallback that already works.
 >
-> **The frontend must show all three as ranked possibilities**, not `prediction` as a verdict.
-> Something like "most likely X, but it could be Y or Z — confirm before spraying". Rendering
-> only `prediction` would put a wrong disease in front of a farmer a third of the time, and no
-> threshold setting available here changes that.
+> **What `status` is for:** wording, not visibility.
+>
+> - `ok` → "Most likely **X**. It could also be Y or Z."
+> - `uncertain` → "Not sure from this photo. It may be **X**, Y or Z — retake in better light
+>   to confirm." Still show all three, and still show `message` and any `warnings`.
+>
+> Rendering `prediction` alone as a verdict would put a wrong disease in front of a farmer
+> roughly **1 time in 3**, with a spraying decision attached.
 >
 > `top3` is **not equally meaningful for every crop**, because it is 3 items drawn from a
 > different number of classes each time:
 >
 > | crop | classes | top-3 accuracy | by chance alone | worth showing? |
 > |---|---|---|---|---|
-> | potato | 3 | 100% | 100% | **no — it lists every potato class** |
 > | maize | 4 | 96% | 75% | marginal |
 > | cotton | 4 | 93% | 75% | marginal |
 > | sugarcane | 5 | 92% | 60% | yes |
 > | tomato | 9 | 80% | 33% | yes |
 > | wheat | 7 | 63% | 43% | marginal |
 > | rice | 6 | 62% | 50% | **barely better than chance** |
+> | potato | 3 | 100% | 100% | **no — it lists every potato class** |
 >
 > For potato, showing 3 of 3 classes conveys nothing — show only `prediction` (77% correct)
 > for that crop. For rice, neither the top-1 (34%) nor the top-3 (62%, against 50% by chance)
