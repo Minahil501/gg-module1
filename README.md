@@ -38,10 +38,12 @@ This is important, because earlier drafts of this module promised more:
 |---|---|
 | Nutrient-deficiency detection | **Removed.** Module 2 (`Stress_Module`) covers nutrients. |
 | Insect detection | **Removed.** No model exists for it. |
-| `farm_id` / `timestamp` in the response | **Not returned.** The backend owns both. |
 | Treatment advice, Urdu names | Backend maps `class_id` → advice. |
 
-⚠️ **This diverges from `REST_API_SPEC.md` Section 9 → AI Module 1**, which still documents a
+`farm_id` and `timestamp` **are** returned, matching the spec — send `farm_id` as a form field
+and it comes back unchanged.
+
+⚠️ **This still diverges from `REST_API_SPEC.md` Section 9 → AI Module 1**, which documents a
 three-part `{disease, nutrient_deficiency, insect}` response. See
 [§9 Known contract gaps](#9-known-contract-gaps) — that gap needs a PM decision, it is not
 something the backend team can paper over.
@@ -191,11 +193,14 @@ app so the Space is awake by the time they photograph a leaf.
 
 These are open issues, not bugs to fix quietly. They need decisions from the PM / backend team.
 
-1. **The response shape does not match `REST_API_SPEC.md` Section 9 → AI Module 1.** The spec
-   mandates `{farm_id, timestamp, disease, nutrient_deficiency, insect}` and instructs the
-   backend to "store response exactly". This service returns `{status, prediction, top3,
-   warnings, ...}` and no nutrient or insect fields. Either the spec is amended or the backend
-   writes an adapter — but the two documents cannot both stand.
+1. **The response shape still does not match `REST_API_SPEC.md` Section 9 → AI Module 1.**
+   `farm_id` and `timestamp` now match it. The rest does not: the spec mandates
+   `disease: {label, confidence}` plus `nutrient_deficiency` and `insect`, and instructs the
+   backend to "store response exactly". No model produces nutrient or insect, so those cannot
+   be adapted around. Separately, the spec's `{label, confidence}` pair has **no way to express
+   "not sure"**, which is what this service returns for roughly 13% of photographs — meeting
+   Section 9 literally would mean inventing a label the model did not commit to. Either the
+   spec is amended or the backend owns a documented adapter.
 2. **Auth fails open.** If `GREENGUARD_API_KEY` is unset in the deployment environment,
    `app.py` disables the key check and only logs a warning. A missing secret on a public Space
    therefore yields a fully open API, not a broken one. Verify the secret is set after deploy.

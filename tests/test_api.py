@@ -44,16 +44,16 @@ def leaf(w=640, h=480, mode="RGB", fmt="JPEG", seed=0, **save):
     return buf.getvalue()
 
 
-def post(client, data, crop=None, headers=KEY, name="leaf.jpg"):
+def post(client, data, crop=None, headers=KEY, name="leaf.jpg", farm_id=None):
     files = {"image": (name, data, "application/octet-stream")} if data is not None else None
-    form = {"crop": crop} if crop is not None else None
+    form = {k: v for k, v in (("crop", crop), ("farm_id", farm_id)) if v is not None} or None
     return client.post("/v1/predict", files=files, data=form, headers=headers)
 
 
 def check_success_shape(body):
     assert body["status"] in ("ok", "uncertain")
     for k in ["prediction", "top3", "crop_source", "detected_crop", "warnings", "message",
-              "model_version", "inference_ms", "request_id"]:
+              "model_version", "inference_ms", "request_id", "farm_id", "timestamp"]:
         assert k in body, k
     assert len(body["top3"]) == 3
     assert body["top3"][0]["confidence"] >= body["top3"][1]["confidence"] >= body["top3"][2]["confidence"]
@@ -180,3 +180,34 @@ def test_blurry_image_warns(client):
     flat = np.zeros((400, 400, 3), np.uint8); flat[..., 1] = 120
     buf = io.BytesIO(); Image.fromarray(flat).save(buf, "JPEG")
     assert "BLURRY_IMAGE" in post(client, buf.getvalue()).json()["warnings"]
+
+
+# ---------- farm_id and timestamp ----------
+def test_farm_id_echoed(client):
+    body = post(client, leaf(), farm_id="farm_001").json()
+    assert body["farm_id"] == "farm_001"
+
+
+def test_farm_id_null_when_not_sent(client):
+    # Always present, never invented: the backend owns this value.
+    body = post(client, leaf()).json()
+    assert body["farm_id"] is None
+
+
+def test_farm_id_echoed_on_error(client):
+    # A failed prediction must still be traceable to the farm that caused it.
+    body = post(client, b"not an image", farm_id="farm_009").json()
+    assert body["status"] == "error" and body["farm_id"] == "farm_009"
+
+
+def test_farm_id_length_capped(client):
+    r = post(client, leaf(), farm_id="x" * 129)
+    assert r.status_code == 400 and r.json()["error"]["code"] == "INVALID_REQUEST"
+
+
+def test_timestamp_format(client):
+    from datetime import datetime, timezone
+    ts = post(client, leaf()).json()["timestamp"]
+    parsed = datetime.strptime(ts, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=timezone.utc)
+    # UTC, not Pakistan local time, and roughly now.
+    assert abs((datetime.now(timezone.utc) - parsed).total_seconds()) < 120

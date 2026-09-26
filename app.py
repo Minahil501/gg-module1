@@ -4,7 +4,7 @@ GreenGuard Disease API (Hugging Face Space, FastAPI).
 Endpoints
   GET  /health        — liveness + model version (no key needed; use it to wake the Space)
   GET  /v1/classes    — all classes grouped by crop
-  POST /v1/predict    — multipart form: image (file, required), crop (text, optional)
+  POST /v1/predict    — multipart form: image (file, required), crop + farm_id (text, optional)
 
 Auth: header X-API-Key must equal the GREENGUARD_API_KEY secret (auth is off if the secret is not set).
 """
@@ -13,6 +13,7 @@ import os
 import secrets
 import uuid
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import FastAPI, File, Form, Header, Request, UploadFile
@@ -49,9 +50,25 @@ def new_id():
     return uuid.uuid4().hex[:12]
 
 
-def error(status, code, message, request_id=None):
-    return JSONResponse(status_code=status, content={
-        "status": "error", "error": {"code": code, "message": message}, "request_id": request_id or new_id()})
+def utc_now():
+    """Second-precision UTC, the format REST_API_SPEC.md Section 9 shows.
+
+    Always UTC, never Pakistan local time: the backend stores one timezone and
+    renders whatever the farmer should see. A mix of zones in one column is a
+    bug that surfaces months later.
+    """
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def error(status, code, message, request_id=None, farm_id=None):
+    body = {"status": "error", "error": {"code": code, "message": message},
+            "request_id": request_id or new_id()}
+    if farm_id is not None:
+        # Echoed when the form was parsed, so a failure can be traced to a farm.
+        # Absent on 401 and 413, which are decided before the body is read --
+        # request_id is the correlation key that is always present.
+        body["farm_id"] = farm_id
+    return JSONResponse(status_code=status, content=body)
 
 
 def auth_error(x_api_key, request_id):
@@ -112,20 +129,29 @@ def classes(x_api_key: Optional[str] = Header(None)):
 @app.post("/v1/predict")
 def predict(image: Optional[UploadFile] = File(None),
             crop: Optional[str] = Form(None),
+            farm_id: Optional[str] = Form(None),
             x_api_key: Optional[str] = Header(None)):
     # sync function: FastAPI runs it in a thread pool, so the model never blocks the server loop
     rid = new_id()
     fail = auth_error(x_api_key, rid) or not_ready(rid)
     if fail:
         return fail
+    # farm_id is passed straight back out, so bound it rather than echoing an
+    # arbitrary payload into the backend's logs and database.
+    if farm_id is not None and len(farm_id) > 128:
+        return error(400, "INVALID_REQUEST", "farm_id must be 128 characters or fewer.", rid)
     if image is None:
-        return error(400, "MISSING_IMAGE", "No image was uploaded (form field 'image').", rid)
+        return error(400, "MISSING_IMAGE", "No image was uploaded (form field 'image').", rid, farm_id)
     data = image.file.read(MAX_FILE_BYTES + 1)
     try:
         result = state["predictor"].predict(data, crop)
     except PredictionError as e:
-        return error(e.status, e.code, e.message, rid)
+        return error(e.status, e.code, e.message, rid, farm_id)
+    # The backend owns both of these; we echo rather than invent. timestamp is when
+    # the prediction completed, which is what belongs against a stored result.
+    result["farm_id"] = farm_id
+    result["timestamp"] = utc_now()
     result["request_id"] = rid
-    log.info("%s %s crop=%s -> %s %s (%.0f ms)", rid, image.filename, crop, result["status"],
-             (result["prediction"] or {}).get("class_id"), result["inference_ms"])
+    log.info("%s farm=%s %s crop=%s -> %s %s (%.0f ms)", rid, farm_id, image.filename, crop,
+             result["status"], (result["prediction"] or {}).get("class_id"), result["inference_ms"])
     return result

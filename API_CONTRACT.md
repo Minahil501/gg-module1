@@ -5,9 +5,9 @@ Auth: every `/v1/*` request needs the header `X-API-Key: <key>` (shared privatel
 Model: `efficientnet_b0-1.0` · **38 reportable classes** · 7 crops.
 
 > **Scope warning.** This service returns **disease only**. It does not return nutrient
-> deficiency, insect presence, `farm_id` or `timestamp`, all of which appear under
-> `REST_API_SPEC.md` Section 9 → AI Module 1. That section is out of date with respect to this
-> service. See [Divergence from REST_API_SPEC.md](#divergence-from-rest_api_specmd).
+> deficiency or insect presence, both of which appear under `REST_API_SPEC.md` Section 9 →
+> AI Module 1. `farm_id` and `timestamp` *are* returned, as that section requires. See
+> [Divergence from REST_API_SPEC.md](#divergence-from-rest_api_specmd) for what is still open.
 
 ---
 
@@ -20,7 +20,8 @@ Identifies the disease on **one leaf photo**.
 | Field | Required | Type | Notes |
 |---|---|---|---|
 | `image` | yes | file | max 10 MB · min 100 px per side · max 50 M pixels |
-| `crop` | no | text | `wheat`, `rice`, `cotton`, `maize`, `sugarcane`, `tomato`, `potato` (case-insensitive; `corn` → maize, `paddy` → rice, `cane`/`sugar_cane` → sugarcane) |
+| `crop` | no | text | `wheat`, `rice`, `cotton`, `maize`, `sugarcane`, `tomato`, `potato` (case-insensitive; `corn` → maize, `paddy` → rice, `cane`/`sugar_cane` → sugarcane). **Send it whenever the farmer has chosen one** — accuracy is materially worse without it. |
+| `farm_id` | no | text | Echoed back unchanged on the response. Max 128 characters. Not used by the model. |
 
 **Accepted image formats.** Anything Pillow can decode — JPG, PNG, WEBP, BMP, GIF, TIFF, and
 HEIC (iPhone) via `pillow-heif`. There is no format allow-list: a file is accepted if it decodes
@@ -31,6 +32,8 @@ rotation is applied, transparency is flattened onto white, and 16-bit/float imag
 ```json
 {
   "status": "ok",
+  "farm_id": "farm_001",
+  "timestamp": "2026-09-26T04:55:12Z",
   "prediction": {
     "class_id": "wheat_yellow_rust",
     "crop": "wheat",
@@ -64,15 +67,17 @@ rotation is applied, transparency is flattened onto white, and 16-bit/float imag
   "message": "Image unclear. Please retake the photo in good light, close to one leaf. The photo looks blurry — hold the phone steady and tap to focus on the leaf.",
   "crop_source": "model",
   "detected_crop": "wheat",
+  "farm_id": "farm_001",
+  "timestamp": "2026-09-26T04:55:13Z",
   "model_version": "efficientnet_b0-1.0",
   "inference_ms": 15.9,
   "request_id": "7c1e4a90b3d2"
 }
 ```
 
-Every key above is present on **every** 200 response. `prediction` is the only one that may be
-`null`; `top3` is always populated, `warnings` is always an array, and `message` is `null`
-unless `status` is `uncertain`.
+Every key above is present on **every** 200 response. `prediction` and `farm_id` are the only
+ones that may be `null` — `farm_id` only when you did not send one. `top3` is always populated,
+`warnings` is always an array, and `message` is `null` unless `status` is `uncertain`.
 
 ### Field meanings
 
@@ -90,6 +95,8 @@ unless `status` is `uncertain`.
 | `is_healthy` | true when `disease == "healthy"` |
 | `confidence` | 0–1, rounded to **4 decimal places** |
 | `inference_ms` | total server time for validation + preprocessing + model, not model time alone |
+| `farm_id` | exactly what you sent, unchanged, or `null` if you sent nothing. Never invented by this service |
+| `timestamp` | when the prediction completed. ISO 8601, **UTC**, second precision (`2026-09-26T04:55:12Z`) — convert to Pakistan time for display, store one timezone |
 | `request_id` | 12 hex chars, on every response including errors. Quote it when reporting a problem |
 
 ### How the decision is made
@@ -185,6 +192,14 @@ uncertain.
 | 500 | `INTERNAL_ERROR` | unexpected server error — quote `request_id` |
 | 503 | `MODEL_NOT_READY` | model still loading, or it failed to load |
 
+`farm_id` is echoed on error responses too, whenever the form was readable — so a failed
+prediction can still be traced to a farm. It is **absent** on `401` and `413`, which are decided
+before the body is parsed. `request_id` is on every response without exception, so use that as
+the correlation key and treat `farm_id` as a convenience.
+
+A `farm_id` longer than 128 characters is rejected with `400 INVALID_REQUEST`. The value is
+passed straight back out to your logs and database, so it is bounded rather than echoed blindly.
+
 Two ordering details worth knowing when you debug:
 
 - **`413` is returned before the API key is checked.** An oversized upload is rejected by
@@ -275,18 +290,25 @@ Not part of the integration surface; do not depend on it.
   "insect": {"label": "...", "confidence": 0.97} }
 ```
 
-and instructs the backend to "store response exactly". **This service returns none of that.**
-Concretely:
+and instructs the backend to "store response exactly". **`farm_id` and `timestamp` now match
+the spec. The rest does not.** Concretely:
 
 | Spec expects | This service |
 |---|---|
-| `farm_id`, `timestamp` | not returned — the backend already holds both |
+| `farm_id`, `timestamp` | ✅ **returned, in the format the spec shows.** Send `farm_id` as a form field and it is echoed back |
 | `disease.label` (e.g. `"Powdery Mildew"`) | `prediction.class_id` (e.g. `"wheat_powdery_mildew"`) + `display_name` |
 | `nutrient_deficiency` | **absent** — Module 2 (`Stress_Module`) covers nutrients |
 | `insect` | **absent** — no model exists |
 | always a label | `prediction` may be `null` when `status` is `uncertain` |
 | crops: gourds, eggplant, tomato | wheat, rice, cotton, maize, sugarcane, tomato, potato |
 
-This needs a decision, not a workaround: either Section 9 is amended to this contract, or the
-backend owns a documented adapter between the two. Whichever is chosen, the crop list changed
-and the nutrient/insect fields are gone — those cannot be adapted around.
+This still needs a decision, not a workaround: either Section 9 is amended to this contract, or
+the backend owns a documented adapter. The nutrient and insect fields cannot be adapted around —
+no model produces them.
+
+**One point the PM should rule on.** The spec's shape, `disease: {label, confidence}`, has no way
+to express "we are not sure". This service abstains on roughly 13% of photographs, and for wheat
+and rice the shortlist is doing most of the work. Forcing every response into a single
+`{label, confidence}` pair would mean either inventing a label the model did not commit to, or
+inventing a low confidence and hoping the backend checks it. If Section 9 is to be met literally,
+that ambiguity is what has to be resolved first.

@@ -1,7 +1,7 @@
 """
 Example client for the backend team.
     pip install requests
-    python client_example.py leaf.jpg wheat
+    python client_example.py leaf.jpg wheat farm_001
 """
 import sys
 import time
@@ -13,14 +13,14 @@ API_KEY = "<your-api-key>"                                  # change this
 TIMEOUT = 60                                                # free Space may need ~30 s to wake up
 
 
-def predict(image_path, crop=None, retries=1):
+def predict(image_path, crop=None, farm_id=None, retries=1):
     for attempt in range(retries + 1):
         try:
             with open(image_path, "rb") as f:
                 r = requests.post(f"{BASE_URL}/v1/predict",
                                   headers={"X-API-Key": API_KEY},
                                   files={"image": f},
-                                  data={"crop": crop} if crop else None,
+                                  data={k: v for k, v in (("crop", crop), ("farm_id", farm_id)) if v},
                                   timeout=TIMEOUT)
             if r.status_code == 503 and attempt < retries:   # model still loading
                 time.sleep(5)
@@ -33,7 +33,9 @@ def predict(image_path, crop=None, retries=1):
 
 
 if __name__ == "__main__":
-    status, body = predict(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else None)
+    status, body = predict(sys.argv[1],
+                           sys.argv[2] if len(sys.argv) > 2 else None,
+                           sys.argv[3] if len(sys.argv) > 3 else None)
     print(status)
     if body.get("status") == "ok":
         p = body["prediction"]
