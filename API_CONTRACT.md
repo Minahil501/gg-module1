@@ -2,7 +2,7 @@
 
 Base URL: `https://<hf-username>-<space-name>.hf.space`
 Auth: every `/v1/*` request needs the header `X-API-Key: <key>` (shared privately by the AI team).
-Model: `efficientnet_b0-1.0` · 40 classes · 7 crops.
+Model: `efficientnet_b0-1.0` · **38 reportable classes** · 7 crops.
 
 > **Scope warning.** This service returns **disease only**. It does not return nutrient
 > deficiency, insect presence, `farm_id` or `timestamp`, all of which appear under
@@ -54,7 +54,7 @@ rotation is applied, transparency is flattened onto white, and 16-bit/float imag
 }
 ```
 
-**Response 200 — uncertain** (low confidence, or crop mismatch)
+**Response 200 — uncertain** (confidence below the threshold)
 ```json
 {
   "status": "uncertain",
@@ -79,10 +79,10 @@ Every key above is present on **every** 200 response. `prediction` is the only o
 |---|---|
 | `status` | `ok` = trust `prediction` · `uncertain` = ask the farmer to retake, show `message`; `top3` may still be shown as "possibly…" |
 | `prediction` | best class, or `null` when uncertain |
-| `top3` | up to 3 most likely classes, highest first. Restricted to the selected crop's classes when `crop` was sent and matched; all 40 classes otherwise |
+| `top3` | up to 3 most likely classes, highest first. Restricted to the selected crop's classes when `crop` was sent; all 38 reportable classes otherwise |
 | `crop_source` | `user` (a valid `crop` was sent) or `model` (no crop sent) |
 | `detected_crop` | the crop the model believes the leaf belongs to. **Always present**, including when `crop_source` is `user` — compare the two to see whether the model agreed |
-| `warnings` | any of `BLURRY_IMAGE`, `LOW_LIGHT`, `OVEREXPOSED`, `CROP_MISMATCH` |
+| `warnings` | any of `BLURRY_IMAGE`, `LOW_LIGHT`, `OVEREXPOSED`. (`CROP_MISMATCH` exists but cannot currently occur — see below.) |
 | `message` | farmer-facing text when uncertain, else `null` |
 | `class_id` | **stable key** — use it to look up treatment advice, Urdu names, etc. Format is `<crop>_<disease>` |
 | `display_name` | humanised `disease`, for display only. Do not key off it |
@@ -95,7 +95,7 @@ Every key above is present on **every** 200 response. `prediction` is the only o
 
 Understanding this matters, because `confidence` means something different in each branch.
 
-**No `crop` sent.** The top class over all 40 must reach **0.70** (`confidence_threshold`),
+**No `crop` sent.** The top class over all 38 must reach **0.70** (`confidence_threshold`),
 otherwise `uncertain`. `confidence` is the raw model probability.
 
 **`crop` sent and the model agrees.** Probabilities are restricted to that crop's classes and
@@ -107,12 +107,12 @@ removed. Treat confidence as comparable only against other responses from the sa
 > ## 🚩 `prediction` alone is wrong 1 time in 3. Show `top3`.
 >
 > This threshold is set low **on purpose**, so the service answers rather than abstains.
-> Measured on 528 web-sourced photos with the crop supplied:
+> Measured on 508 web-sourced photos with the crop supplied:
 >
 > | | |
 > |---|---|
-> | answers given (not `uncertain`) | **86%** |
-> | `prediction` (top-1) is correct | **63%** |
+> | answers given (not `uncertain`) | **87%** |
+> | `prediction` (top-1) is correct | **64%** |
 > | the true disease is somewhere in `top3` | **88%** |
 >
 > So the single best guess is wrong on roughly **1 answer in 3**, while the three-item list
@@ -134,7 +134,7 @@ removed. Treat confidence as comparable only against other responses from the sa
 > | cotton | 4 | 93% | 75% | marginal |
 > | sugarcane | 5 | 92% | 60% | yes |
 > | tomato | 9 | 80% | 33% | yes |
-> | wheat | 9 | 59% | 33% | yes |
+> | wheat | 7 | 63% | 43% | marginal |
 > | rice | 6 | 62% | 50% | **barely better than chance** |
 >
 > For potato, showing 3 of 3 classes conveys nothing — show only `prediction` (77% correct)
@@ -143,17 +143,15 @@ removed. Treat confidence as comparable only against other responses from the sa
 >
 > Raw per-photo data for every configuration is in `test_results/`.
 
-**`crop` sent and the model disagrees.** If the model's best crop is not the one sent *and*
-that crop holds at least **0.50** of the total probability mass (`crop_mismatch_threshold`),
-the result is `uncertain` with `CROP_MISMATCH`, `detected_crop` set to what the model saw, and
-`top3` spanning all crops.
+**`crop` sent and the model disagrees — currently disabled.** There is a crop-mismatch check
+that can override the farmer's choice, but `crop_mismatch_threshold` is set to **1.01**, above
+any attainable probability mass, so **it never fires and `CROP_MISMATCH` is never returned**.
 
-> **Known gap between those two rules.** When probability is spread thinly across crops — no
-> single crop reaching 0.50 — the mismatch check does not fire, so the request falls into the
-> renormalisation branch even though the model was not confident about the crop at all. A
-> weakly-supported crop can then be renormalised into a confident-looking answer. If you see
-> `crop_source: "user"`, `status: "ok"` and `detected_crop` ≠ the crop you sent, treat that
-> response with suspicion; it is exactly this case.
+It was switched off deliberately: the farmer's crop selection is authoritative, and the model's
+own crop guess disagreed with it on 38% of test photographs — it was rejecting good answers far
+more often than it caught real mistakes. `detected_crop` is still reported, so you can compare
+it against the crop you sent. If they differ while `status` is `ok`, the model did not recognise
+the crop; treat that response with more caution.
 
 Quality warnings (`BLURRY_IMAGE`, `LOW_LIGHT`, `OVEREXPOSED`) **do not by themselves force
 `uncertain`** — a sharp answer on a slightly dark photo still returns `ok` with a warning
@@ -195,6 +193,12 @@ Two ordering details worth knowing when you debug:
 All classes grouped by crop — use it to build the crop picker and the `class_id` → advice
 lookup, rather than hard-coding either. Needs `X-API-Key`.
 
+⚠️ **This is 38 classes, not 40.** `wheat_black_point` and `wheat_fusarium_foot_rot` are
+suppressed and can never be returned by `/v1/predict`, so they are not listed here either.
+Black point affects the grain and fusarium foot rot the stem base — neither is visible on a
+leaf, so the model could only ever guess at them. Do not carry treatment advice for them, and
+do not hard-code the old 40-item list. The suppressed set lives in `model/config.json`.
+
 ```json
 {
   "model_version": "efficientnet_b0-1.0",
@@ -219,7 +223,7 @@ Entries here carry **no `confidence` key** — same object as in `top3` otherwis
 No key required. Use it to wake a sleeping Space.
 
 ```json
-{"status": "ok", "model_version": "efficientnet_b0-1.0", "num_classes": 40}
+{"status": "ok", "model_version": "efficientnet_b0-1.0", "num_classes": 38}
 ```
 
 While starting, or if the model failed to load, it returns **HTTP 503** with the standard error

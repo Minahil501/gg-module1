@@ -21,8 +21,11 @@ Takes **one leaf photo**, returns **one plant disease** (or `healthy`), with a c
 and the top 3 candidates.
 
 - **Model:** EfficientNet-B0, exported to ONNX, run on CPU via `onnxruntime`.
-- **Coverage:** 40 classes across 7 Pakistani field crops — wheat, rice, cotton, maize,
-  sugarcane, tomato, potato. Full list: `model/labels.json`, or `GET /v1/classes`.
+- **Coverage:** **38 reportable classes** across 7 Pakistani field crops — wheat, rice, cotton,
+  maize, sugarcane, tomato, potato. The model has 40 outputs, but `wheat_black_point` and
+  `wheat_fusarium_foot_rot` are suppressed in `model/config.json`: both affect the grain or stem
+  base rather than the leaf, so a leaf photo cannot show them. Authoritative list:
+  `GET /v1/classes` — not `model/labels.json`, which still has all 40.
 - **Safety behaviour:** rather than guessing, the API returns `status: "uncertain"` with a
   farmer-facing message when confidence falls below the configured threshold. Blur, low light
   and overexposure are reported as `warnings` but do not by themselves force `uncertain`.
@@ -116,12 +119,12 @@ rotation invariance, and the blur/low-light warnings.
 ## 5. How well does it actually work?
 
 **Read `docs/EVALUATION_REPORT.pdf` before promising anything to anyone.** Summary, measured on
-528 web-sourced photographs with the crop supplied:
+508 web-sourced photographs with the crop supplied:
 
 | | |
 |---|---|
-| service answers rather than abstaining | 86% |
-| its single best guess is correct | **63%** |
+| service answers rather than abstaining | 87% |
+| its single best guess is correct | **64%** |
 | the correct disease is somewhere in `top3` | **88%** |
 
 The shortlist is the product. The single `prediction` is wrong on roughly one answer in three,
@@ -129,8 +132,8 @@ so the interface must show all three ranked possibilities — see the red-flag b
 `API_CONTRACT.md`.
 
 Accuracy is very uneven by crop. Potato (77%), cotton (73%) and maize (73%) are usable;
-**rice and wheat are 34%**, close to guesswork, and should not be offered to farmers until the
-model is retrained. Healthy leaves were not tested at all, so the false-alarm rate on a healthy
+wheat is 42% after suppressing its two non-leaf classes, and **rice is 34%** — close to
+guesswork, and should not be offered to farmers until the model is retrained. Healthy leaves were not tested at all, so the false-alarm rate on a healthy
 plant is unknown — the report lists that as the largest open risk.
 
 Re-run it yourself on any labelled zip:

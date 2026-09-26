@@ -97,7 +97,7 @@ def health():
     p = state["predictor"]
     if p is None:
         return error(503, "MODEL_NOT_READY", f"Model not loaded: {state['load_error'] or 'starting'}")
-    return {"status": "ok", "model_version": p.version, "num_classes": len(p.labels)}
+    return {"status": "ok", "model_version": p.version, "num_classes": p.num_reportable}
 
 
 @app.get("/v1/classes")

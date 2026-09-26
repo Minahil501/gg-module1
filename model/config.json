@@ -30,6 +30,10 @@
     "min_brightness": 53.7,
     "max_brightness": 185.7
   },
+  "suppressed_classes": [
+    "wheat_black_point",
+    "wheat_fusarium_foot_rot"
+  ],
   "crop_filtered_threshold": 0.35,
   "crop_mismatch_threshold": 1.01
 }

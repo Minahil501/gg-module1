@@ -1,0 +1,611 @@
+backend    local model files
+model      efficientnet_b0-1.0  (40 classes)
+images     528 from named.zip
+crop sent  yes (true crop)
+
+[   1/528] BAD named\cotton\bacterial blight\Cbb1.jpg        cotton_curl_virus               0.84
+[   2/528] OK  named\cotton\bacterial blight\Cbb10.jpg       cotton_bacterial_blight         0.36
+[   3/528] OK  named\cotton\bacterial blight\Cbb11.jpg       cotton_bacterial_blight         0.83
+[   4/528] OK  named\cotton\bacterial blight\Cbb12.jpg       cotton_bacterial_blight         0.85
+[   5/528] OK  named\cotton\bacterial blight\Cbb13.jpg       cotton_bacterial_blight         0.87
+[   6/528] OK  named\cotton\bacterial blight\Cbb14.gif       cotton_bacterial_blight         0.87
+[   7/528] OK  named\cotton\bacterial blight\Cbb15.jpg       cotton_bacterial_blight         0.58
+[   8/528] OK  named\cotton\bacterial blight\Cbb16.jpg       cotton_bacterial_blight         0.45
+[   9/528] BAD named\cotton\bacterial blight\Cbb17.jpg       cotton_curl_virus               0.56
+[  10/528] BAD named\cotton\bacterial blight\Cbb18.jpg       cotton_healthy                  0.58
+[  11/528] OK  named\cotton\bacterial blight\Cbb19.jpg       cotton_bacterial_blight         0.38
+[  12/528] --  named\cotton\bacterial blight\Cbb2.jpg        uncertain                       0.00
+[  13/528] BAD named\cotton\bacterial blight\Cbb20.jpg       cotton_curl_virus               0.71
+[  14/528] OK  named\cotton\bacterial blight\Cbb21.jpg       cotton_bacterial_blight         0.82
+[  15/528] OK  named\cotton\bacterial blight\Cbb22.jpg       cotton_bacterial_blight         0.63
+[  16/528] --  named\cotton\bacterial blight\Cbb23.jpg       uncertain                       0.00
+[  17/528] BAD named\cotton\bacterial blight\Cbb24.png       cotton_leaf_redding             0.53
+[  18/528] OK  named\cotton\bacterial blight\Cbb25.jpg       cotton_bacterial_blight         0.46
+[  19/528] --  named\cotton\bacterial blight\Cbb3.jpg        uncertain                       0.00
+[  20/528] OK  named\cotton\bacterial blight\Cbb4.png        cotton_bacterial_blight         0.75
+[  21/528] OK  named\cotton\bacterial blight\Cbb5.jpg        cotton_bacterial_blight         0.44
+[  22/528] OK  named\cotton\bacterial blight\Cbb6.jpg        cotton_bacterial_blight         0.90
+[  23/528] BAD named\cotton\bacterial blight\Cbb7.jpg        cotton_leaf_redding             0.52
+[  24/528] OK  named\cotton\bacterial blight\Cbb8.jpg        cotton_bacterial_blight         0.36
+[  25/528] BAD named\cotton\bacterial blight\Cbb9.jpg        cotton_leaf_redding             0.97
+[  26/528] OK  named\cotton\curl virus\ccv1.jpg              cotton_curl_virus               0.91
+[  27/528] BAD named\cotton\curl virus\ccv10.jpg             cotton_leaf_redding             0.48
+[  28/528] --  named\cotton\curl virus\ccv11.jpg             uncertain                       0.00
+[  29/528] BAD named\cotton\curl virus\ccv12.jpg             cotton_bacterial_blight         0.47
+[  30/528] OK  named\cotton\curl virus\ccv13.jpg             cotton_curl_virus               0.58
+[  31/528] OK  named\cotton\curl virus\ccv14.jpg             cotton_curl_virus               0.73
+[  32/528] OK  named\cotton\curl virus\ccv15.jpg             cotton_curl_virus               0.83
+[  33/528] OK  named\cotton\curl virus\ccv16.jpg             cotton_curl_virus               0.98
+[  34/528] OK  named\cotton\curl virus\ccv17.jpg             cotton_curl_virus               0.35
+[  35/528] BAD named\cotton\curl virus\ccv18.jpg             cotton_bacterial_blight         0.45
+[  36/528] OK  named\cotton\curl virus\ccv19.jpg             cotton_curl_virus               0.35
+[  37/528] BAD named\cotton\curl virus\ccv2.jpg              cotton_leaf_redding             0.80
+[  38/528] OK  named\cotton\curl virus\ccv20.jpg             cotton_curl_virus               0.73
+[  39/528] OK  named\cotton\curl virus\ccv21.jpg             cotton_curl_virus               0.37
+[  40/528] BAD named\cotton\curl virus\ccv22.jpg             cotton_bacterial_blight         0.35
+[  41/528] OK  named\cotton\curl virus\ccv23.jpg             cotton_curl_virus               0.40
+[  42/528] --  named\cotton\curl virus\ccv24.jpg             uncertain                       0.00
+[  43/528] BAD named\cotton\curl virus\ccv25.webp            cotton_bacterial_blight         0.42
+[  44/528] OK  named\cotton\curl virus\ccv3.jpg              cotton_curl_virus               0.69
+[  45/528] OK  named\cotton\curl virus\ccv4.jpg              cotton_curl_virus               0.41
+[  46/528] OK  named\cotton\curl virus\ccv5.jpg              cotton_curl_virus               0.54
+[  47/528] BAD named\cotton\curl virus\ccv6.jpg              cotton_bacterial_blight         0.47
+[  48/528] BAD named\cotton\curl virus\ccv7.jpg              cotton_bacterial_blight         0.35
+[  49/528] --  named\cotton\curl virus\ccv8.jpg              uncertain                       0.00
+[  50/528] OK  named\cotton\curl virus\ccv9.jpg              cotton_curl_virus               0.87
+[  51/528] OK  named\cotton\leaf reddening\clr1.jpg          cotton_leaf_redding             0.97
+[  52/528] OK  named\cotton\leaf reddening\clr10.jpg         cotton_leaf_redding             0.99
+[  53/528] OK  named\cotton\leaf reddening\clr11.png         cotton_leaf_redding             1.00
+[  54/528] OK  named\cotton\leaf reddening\clr12.png         cotton_leaf_redding             0.69
+[  55/528] OK  named\cotton\leaf reddening\clr13.jpg         cotton_leaf_redding             0.97
+[  56/528] OK  named\cotton\leaf reddening\clr14.jpg         cotton_leaf_redding             0.80
+[  57/528] OK  named\cotton\leaf reddening\clr15.jpg         cotton_leaf_redding             0.97
+[  58/528] OK  named\cotton\leaf reddening\clr16.png         cotton_leaf_redding             0.99
+[  59/528] OK  named\cotton\leaf reddening\clr17.jpg         cotton_leaf_redding             0.99
+[  60/528] OK  named\cotton\leaf reddening\clr18.png         cotton_leaf_redding             1.00
+[  61/528] OK  named\cotton\leaf reddening\clr19.png         cotton_leaf_redding             0.96
+[  62/528] OK  named\cotton\leaf reddening\clr2.jpg          cotton_leaf_redding             0.57
+[  63/528] OK  named\cotton\leaf reddening\clr20.png         cotton_leaf_redding             0.76
+[  64/528] OK  named\cotton\leaf reddening\clr21.jpg         cotton_leaf_redding             0.91
+[  65/528] BAD named\cotton\leaf reddening\clr22.webp        cotton_bacterial_blight         0.46
+[  66/528] OK  named\cotton\leaf reddening\clr23.webp        cotton_leaf_redding             0.87
+[  67/528] BAD named\cotton\leaf reddening\clr24.jpg         cotton_bacterial_blight         0.61
+[  68/528] OK  named\cotton\leaf reddening\clr25.webp        cotton_leaf_redding             0.87
+[  69/528] OK  named\cotton\leaf reddening\clr3.png          cotton_leaf_redding             0.96
+[  70/528] OK  named\cotton\leaf reddening\clr4.png          cotton_leaf_redding             0.99
+[  71/528] OK  named\cotton\leaf reddening\clr5.jpg          cotton_leaf_redding             0.61
+[  72/528] OK  named\cotton\leaf reddening\clr6.png          cotton_leaf_redding             0.96
+[  73/528] OK  named\cotton\leaf reddening\clr7.png          cotton_leaf_redding             0.86
+[  74/528] OK  named\cotton\leaf reddening\clr8.webp         cotton_leaf_redding             0.87
+[  75/528] OK  named\cotton\leaf reddening\clr9.webp         cotton_leaf_redding             0.99
+[  76/528] OK  named\maize\common rust\mcr1.jpg              maize_common_rust               0.99
+[  77/528] OK  named\maize\common rust\mcr10.jpg             maize_common_rust               0.96
+[  78/528] OK  named\maize\common rust\mcr11.jpg             maize_common_rust               0.99
+[  79/528] OK  named\maize\common rust\mcr12.jpg             maize_common_rust               0.98
+[  80/528] OK  named\maize\common rust\mcr13.jpg             maize_common_rust               0.99
+[  81/528] OK  named\maize\common rust\mcr14.jpg             maize_common_rust               0.78
+[  82/528] OK  named\maize\common rust\mcr15.jpg             maize_common_rust               0.51
+[  83/528] OK  named\maize\common rust\mcr16.jpg             maize_common_rust               0.99
+[  84/528] OK  named\maize\common rust\mcr17.jpg             maize_common_rust               1.00
+[  85/528] OK  named\maize\common rust\mcr18.jpg             maize_common_rust               0.51
+[  86/528] OK  named\maize\common rust\mcr19.png             maize_common_rust               0.99
+[  87/528] BAD named\maize\common rust\mcr2.jpg              maize_northern_leaf_blight      0.65
+[  88/528] OK  named\maize\common rust\mcr20.jpg             maize_common_rust               0.99
+[  89/528] OK  named\maize\common rust\mcr21.webp            maize_common_rust               0.99
+[  90/528] OK  named\maize\common rust\mcr22.jpg             maize_common_rust               0.51
+[  91/528] OK  named\maize\common rust\mcr23.png             maize_common_rust               0.99
+[  92/528] OK  named\maize\common rust\mcr24.jpg             maize_common_rust               0.98
+[  93/528] OK  named\maize\common rust\mcr25.jpg             maize_common_rust               0.99
+[  94/528] OK  named\maize\common rust\mcr3.jpg              maize_common_rust               0.99
+[  95/528] OK  named\maize\common rust\mcr4.jpeg             maize_common_rust               0.99
+[  96/528] OK  named\maize\common rust\mcr5.jpg              maize_common_rust               0.99
+[  97/528] OK  named\maize\common rust\mcr6.jpg              maize_common_rust               0.97
+[  98/528] OK  named\maize\common rust\mcr7.jpg              maize_common_rust               0.99
+[  99/528] OK  named\maize\common rust\mcr8.jpg              maize_common_rust               0.99
+[ 100/528] OK  named\maize\common rust\mcr9.jpg              maize_common_rust               0.98
+[ 101/528] BAD named\maize\gray leaf spot\mglf1.jpg          maize_common_rust               0.87
+[ 102/528] BAD named\maize\gray leaf spot\mglf10.jpg         maize_northern_leaf_blight      0.67
+[ 103/528] BAD named\maize\gray leaf spot\mglf11.jpg         maize_northern_leaf_blight      0.96
+[ 104/528] BAD named\maize\gray leaf spot\mglf12.gif         maize_northern_leaf_blight      0.97
+[ 105/528] BAD named\maize\gray leaf spot\mglf13.jpg         maize_northern_leaf_blight      0.85
+[ 106/528] BAD named\maize\gray leaf spot\mglf14.jpg         maize_northern_leaf_blight      0.55
+[ 107/528] BAD named\maize\gray leaf spot\mglf15.png         maize_northern_leaf_blight      0.64
+[ 108/528] BAD named\maize\gray leaf spot\mglf16.jpg         maize_northern_leaf_blight      0.97
+[ 109/528] BAD named\maize\gray leaf spot\mglf17.jpg         maize_northern_leaf_blight      0.89
+[ 110/528] BAD named\maize\gray leaf spot\mglf18.jpg         maize_northern_leaf_blight      0.99
+[ 111/528] BAD named\maize\gray leaf spot\mglf19.jpg         maize_northern_leaf_blight      0.87
+[ 112/528] BAD named\maize\gray leaf spot\mglf2.jpg          maize_northern_leaf_blight      0.63
+[ 113/528] BAD named\maize\gray leaf spot\mglf20.jpg         maize_northern_leaf_blight      0.63
+[ 114/528] OK  named\maize\gray leaf spot\mglf21.jpg         maize_gray_leaf_spot            0.92
+[ 115/528] OK  named\maize\gray leaf spot\mglf23.webp        maize_gray_leaf_spot            0.72
+[ 116/528] BAD named\maize\gray leaf spot\mglf24.jpg         maize_northern_leaf_blight      0.59
+[ 117/528] OK  named\maize\gray leaf spot\mglf25.jpg         maize_gray_leaf_spot            0.92
+[ 118/528] OK  named\maize\gray leaf spot\mglf3.jpg          maize_gray_leaf_spot            0.72
+[ 119/528] BAD named\maize\gray leaf spot\mglf4.jpg          maize_northern_leaf_blight      0.52
+[ 120/528] BAD named\maize\gray leaf spot\mglf5.jpg          maize_common_rust               0.99
+[ 121/528] BAD named\maize\gray leaf spot\mglf6.jpg          maize_northern_leaf_blight      0.99
+[ 122/528] BAD named\maize\gray leaf spot\mglf7.jpg          maize_common_rust               0.99
+[ 123/528] OK  named\maize\gray leaf spot\mglf8.jpg          maize_gray_leaf_spot            0.82
+[ 124/528] OK  named\maize\gray leaf spot\mglf9.jpg          maize_gray_leaf_spot            0.98
+[ 125/528] OK  named\maize\nothern leaf blight\mnlb1.jpg     maize_northern_leaf_blight      0.99
+[ 126/528] OK  named\maize\nothern leaf blight\mnlb10.jpg    maize_northern_leaf_blight      0.97
+[ 127/528] OK  named\maize\nothern leaf blight\mnlb11.jpg    maize_northern_leaf_blight      0.98
+[ 128/528] BAD named\maize\nothern leaf blight\mnlb12.jpg    maize_gray_leaf_spot            0.84
+[ 129/528] OK  named\maize\nothern leaf blight\mnlb13.jpg    maize_northern_leaf_blight      0.99
+[ 130/528] OK  named\maize\nothern leaf blight\mnlb14.jpg    maize_northern_leaf_blight      0.87
+[ 131/528] OK  named\maize\nothern leaf blight\mnlb15.jpg    maize_northern_leaf_blight      0.98
+[ 132/528] OK  named\maize\nothern leaf blight\mnlb16.jpg    maize_northern_leaf_blight      0.99
+[ 133/528] OK  named\maize\nothern leaf blight\mnlb17.jpg    maize_northern_leaf_blight      0.98
+[ 134/528] OK  named\maize\nothern leaf blight\mnlb18.jpg    maize_northern_leaf_blight      0.99
+[ 135/528] OK  named\maize\nothern leaf blight\mnlb19.jpg    maize_northern_leaf_blight      0.94
+[ 136/528] OK  named\maize\nothern leaf blight\mnlb2.jpg     maize_northern_leaf_blight      0.99
+[ 137/528] OK  named\maize\nothern leaf blight\mnlb20.jpg    maize_northern_leaf_blight      0.99
+[ 138/528] OK  named\maize\nothern leaf blight\mnlb21.jpg    maize_northern_leaf_blight      0.92
+[ 139/528] OK  named\maize\nothern leaf blight\mnlb22.webp   maize_northern_leaf_blight      0.97
+[ 140/528] OK  named\maize\nothern leaf blight\mnlb23.png    maize_northern_leaf_blight      0.99
+[ 141/528] OK  named\maize\nothern leaf blight\mnlb24.jpg    maize_northern_leaf_blight      0.87
+[ 142/528] OK  named\maize\nothern leaf blight\mnlb25.jpg    maize_northern_leaf_blight      0.99
+[ 143/528] OK  named\maize\nothern leaf blight\mnlb3.jpg     maize_northern_leaf_blight      0.99
+[ 144/528] OK  named\maize\nothern leaf blight\mnlb4.jpg     maize_northern_leaf_blight      0.92
+[ 145/528] OK  named\maize\nothern leaf blight\mnlb5.jpg     maize_northern_leaf_blight      0.95
+[ 146/528] OK  named\maize\nothern leaf blight\mnlb6.jpg     maize_northern_leaf_blight      0.95
+[ 147/528] OK  named\maize\nothern leaf blight\mnlb7.jpg     maize_northern_leaf_blight      0.98
+[ 148/528] OK  named\maize\nothern leaf blight\mnlb8.jpg     maize_northern_leaf_blight      0.95
+[ 149/528] OK  named\maize\nothern leaf blight\mnlb9.jpg     maize_northern_leaf_blight      0.99
+[ 150/528] OK  named\potatao\early blight\peb1.jpg           potato_early_blight             0.78
+[ 151/528] OK  named\potatao\early blight\peb10.webp         potato_early_blight             1.00
+[ 152/528] OK  named\potatao\early blight\peb11.png          potato_early_blight             0.97
+[ 153/528] BAD named\potatao\early blight\peb12.jpg          potato_late_blight              0.54
+[ 154/528] BAD named\potatao\early blight\peb13.jpg          potato_late_blight              0.45
+[ 155/528] BAD named\potatao\early blight\peb14.jpg          potato_late_blight              1.00
+[ 156/528] OK  named\potatao\early blight\peb15.jpg          potato_early_blight             0.93
+[ 157/528] BAD named\potatao\early blight\peb16.jpg          potato_late_blight              0.98
+[ 158/528] OK  named\potatao\early blight\peb17.jpg          potato_early_blight             1.00
+[ 159/528] OK  named\potatao\early blight\peb18.jpg          potato_early_blight             0.95
+[ 160/528] OK  named\potatao\early blight\peb19.jpg          potato_early_blight             0.65
+[ 161/528] OK  named\potatao\early blight\peb2.jpg           potato_early_blight             0.97
+[ 162/528] OK  named\potatao\early blight\peb20.jpg          potato_early_blight             0.78
+[ 163/528] BAD named\potatao\early blight\peb21.jpg          potato_late_blight              0.99
+[ 164/528] BAD named\potatao\early blight\peb22.jpg          potato_late_blight              0.67
+[ 165/528] BAD named\potatao\early blight\peb23.jpg          potato_late_blight              0.39
+[ 166/528] OK  named\potatao\early blight\peb24.jpg          potato_early_blight             0.84
+[ 167/528] OK  named\potatao\early blight\peb25.jpg          potato_early_blight             0.85
+[ 168/528] OK  named\potatao\early blight\peb3.jpg           potato_early_blight             0.99
+[ 169/528] OK  named\potatao\early blight\peb4.jpg           potato_early_blight             0.86
+[ 170/528] OK  named\potatao\early blight\peb5.jpg           potato_early_blight             0.89
+[ 171/528] BAD named\potatao\early blight\peb6.jpg           potato_late_blight              0.59
+[ 172/528] OK  named\potatao\early blight\peb7.jpg           potato_early_blight             0.99
+[ 173/528] OK  named\potatao\early blight\peb8.jpg           potato_early_blight             0.86
+[ 174/528] OK  named\potatao\early blight\peb9.jpg           potato_early_blight             0.81
+[ 175/528] OK  named\potatao\late blight\plb1.jpg            potato_late_blight              0.83
+[ 176/528] OK  named\potatao\late blight\plb10.jpg           potato_late_blight              0.99
+[ 177/528] OK  named\potatao\late blight\plb12.jpeg          potato_late_blight              1.00
+[ 178/528] OK  named\potatao\late blight\plb13.jpg           potato_late_blight              0.79
+[ 179/528] OK  named\potatao\late blight\plb14.jpg           potato_late_blight              0.54
+[ 180/528] OK  named\potatao\late blight\plb16.jpg           potato_late_blight              0.99
+[ 181/528] BAD named\potatao\late blight\plb17.png           potato_early_blight             0.73
+[ 182/528] OK  named\potatao\late blight\plb18.jpg           potato_late_blight              0.83
+[ 183/528] OK  named\potatao\late blight\plb19.jpg           potato_late_blight              0.54
+[ 184/528] OK  named\potatao\late blight\plb2.jpg            potato_late_blight              0.83
+[ 185/528] OK  named\potatao\late blight\plb20.jpg           potato_late_blight              0.99
+[ 186/528] OK  named\potatao\late blight\plb21.jpg           potato_late_blight              0.93
+[ 187/528] OK  named\potatao\late blight\plb22.jpg           potato_late_blight              0.99
+[ 188/528] OK  named\potatao\late blight\plb23.jpg           potato_late_blight              0.79
+[ 189/528] OK  named\potatao\late blight\plb24.jpg           potato_late_blight              0.81
+[ 190/528] OK  named\potatao\late blight\plb25.jpeg          potato_late_blight              1.00
+[ 191/528] OK  named\potatao\late blight\plb3.jpg            potato_late_blight              0.97
+[ 192/528] OK  named\potatao\late blight\plb4.webp           potato_late_blight              0.86
+[ 193/528] OK  named\potatao\late blight\plb5.jpg            potato_late_blight              0.76
+[ 194/528] OK  named\potatao\late blight\plb6.jpg            potato_late_blight              0.54
+[ 195/528] BAD named\potatao\late blight\plb7.jpg            potato_early_blight             0.92
+[ 196/528] BAD named\potatao\late blight\plb8.jpg            potato_early_blight             0.86
+[ 197/528] OK  named\potatao\late blight\plb9.jpg            potato_late_blight              0.92
+[ 198/528] BAD named\rice\bacterial blight\rbb1.jpg          rice_sheath_blight              0.71
+[ 199/528] BAD named\rice\bacterial blight\rbb10.jpg         rice_sheath_blight              0.51
+[ 200/528] BAD named\rice\bacterial blight\rbb11.webp        rice_sheath_blight              0.72
+[ 201/528] BAD named\rice\bacterial blight\rbb12.jpg         rice_leaf_blast                 0.77
+[ 202/528] BAD named\rice\bacterial blight\rbb13.jpg         rice_sheath_blight              0.52
+[ 203/528] BAD named\rice\bacterial blight\rbb14.jpg         rice_leaf_blast                 0.51
+[ 204/528] BAD named\rice\bacterial blight\rbb15.jpg         rice_sheath_blight              0.52
+[ 205/528] BAD named\rice\bacterial blight\rbb16.jpg         rice_leaf_scald                 0.42
+[ 206/528] --  named\rice\bacterial blight\rbb17.jpg         uncertain                       0.00
+[ 207/528] --  named\rice\bacterial blight\rbb18.jpg         uncertain                       0.00
+[ 208/528] BAD named\rice\bacterial blight\rbb19.webp        rice_sheath_blight              0.81
+[ 209/528] BAD named\rice\bacterial blight\rbb2.jpg          rice_sheath_blight              0.94
+[ 210/528] --  named\rice\bacterial blight\rbb20.jpg         uncertain                       0.00
+[ 211/528] BAD named\rice\bacterial blight\rbb21.jpg         rice_healthy                    0.41
+[ 212/528] BAD named\rice\bacterial blight\rbb22.jpg         rice_healthy                    0.70
+[ 213/528] --  named\rice\bacterial blight\rbb23.jpg         uncertain                       0.00
+[ 214/528] BAD named\rice\bacterial blight\rbb24.webp        rice_sheath_blight              0.72
+[ 215/528] --  named\rice\bacterial blight\rbb25.jpg         uncertain                       0.00
+[ 216/528] --  named\rice\bacterial blight\rbb3.jpg          uncertain                       0.00
+[ 217/528] --  named\rice\bacterial blight\rbb4.jpg          uncertain                       0.00
+[ 218/528] BAD named\rice\bacterial blight\rbb5.jpg          rice_sheath_blight              0.77
+[ 219/528] BAD named\rice\bacterial blight\rbb6.jpg          rice_sheath_blight              0.69
+[ 220/528] --  named\rice\bacterial blight\rbb7.jpg          uncertain                       0.00
+[ 221/528] --  named\rice\bacterial blight\rbb8.jpg          uncertain                       0.00
+[ 222/528] BAD named\rice\bacterial blight\rbb9.jpg          rice_sheath_blight              0.69
+[ 223/528] --  named\rice\brown spot\rbs1.jpg                uncertain                       0.00
+[ 224/528] OK  named\rice\brown spot\rbs10.jpg               rice_brown_spot                 0.63
+[ 225/528] OK  named\rice\brown spot\rbs2.jpg                rice_brown_spot                 0.37
+[ 226/528] BAD named\rice\brown spot\rbs3.jpg                rice_sheath_blight              0.75
+[ 227/528] OK  named\rice\brown spot\rbs4.jpg                rice_brown_spot                 0.82
+[ 228/528] BAD named\rice\brown spot\rbs5.jpg                rice_leaf_blast                 0.83
+[ 229/528] OK  named\rice\brown spot\rbs6.jpg                rice_brown_spot                 0.91
+[ 230/528] OK  named\rice\brown spot\rbs7.jpg                rice_brown_spot                 0.58
+[ 231/528] BAD named\rice\brown spot\rbs8.jpg                rice_healthy                    0.69
+[ 232/528] OK  named\rice\brown spot\rbs9.jpg                rice_brown_spot                 0.98
+[ 233/528] BAD named\rice\leaf blast\rlb1.jpg                rice_sheath_blight              0.75
+[ 234/528] BAD named\rice\leaf blast\rlb10.jpg               rice_brown_spot                 0.86
+[ 235/528] OK  named\rice\leaf blast\rlb2.jpg                rice_leaf_blast                 0.83
+[ 236/528] BAD named\rice\leaf blast\rlb3.jpg                rice_sheath_blight              0.88
+[ 237/528] BAD named\rice\leaf blast\rlb4.jpg                rice_sheath_blight              0.62
+[ 238/528] BAD named\rice\leaf blast\rlb5.jpg                rice_sheath_blight              0.65
+[ 239/528] OK  named\rice\leaf blast\rlb6.jpg                rice_leaf_blast                 0.88
+[ 240/528] BAD named\rice\leaf blast\rlb7.jpg                rice_brown_spot                 0.44
+[ 241/528] OK  named\rice\leaf blast\rlb8.jpg                rice_leaf_blast                 0.42
+[ 242/528] BAD named\rice\leaf blast\rlb9.jpg                rice_sheath_blight              0.52
+[ 243/528] BAD named\rice\leaf scald\rls1.jpg                rice_sheath_blight              0.53
+[ 244/528] BAD named\rice\leaf scald\rls10.jpg               rice_sheath_blight              0.92
+[ 245/528] BAD named\rice\leaf scald\rls2.jpg                rice_sheath_blight              0.75
+[ 246/528] --  named\rice\leaf scald\rls3.jpg                uncertain                       0.00
+[ 247/528] BAD named\rice\leaf scald\rls4.jpg                rice_sheath_blight              0.48
+[ 248/528] --  named\rice\leaf scald\rls5.jpg                uncertain                       0.00
+[ 249/528] --  named\rice\leaf scald\rls6.jpg                uncertain                       0.00
+[ 250/528] OK  named\rice\leaf scald\rls7.jpg                rice_leaf_scald                 0.59
+[ 251/528] OK  named\rice\leaf scald\rls8.jpg                rice_leaf_scald                 0.55
+[ 252/528] BAD named\rice\leaf scald\rls9.jpg                rice_sheath_blight              0.90
+[ 253/528] OK  named\rice\sheath blight\rsb1.jpg             rice_sheath_blight              0.81
+[ 254/528] OK  named\rice\sheath blight\rsb10.jpg            rice_sheath_blight              0.96
+[ 255/528] OK  named\rice\sheath blight\rsb2.jpg             rice_sheath_blight              0.93
+[ 256/528] OK  named\rice\sheath blight\rsb3.jpg             rice_sheath_blight              1.00
+[ 257/528] OK  named\rice\sheath blight\rsb4.jpg             rice_sheath_blight              0.55
+[ 258/528] BAD named\rice\sheath blight\rsb5.jpg             rice_leaf_scald                 0.84
+[ 259/528] OK  named\rice\sheath blight\rsb6.jpg             rice_sheath_blight              0.93
+[ 260/528] BAD named\rice\sheath blight\rsb7.jpg             rice_leaf_blast                 0.61
+[ 261/528] OK  named\rice\sheath blight\rsb8.jpg             rice_sheath_blight              0.64
+[ 262/528] OK  named\rice\sheath blight\rsb9.jpg             rice_sheath_blight              0.67
+[ 263/528] BAD named\sugarcane\mosaic\sc m 2.jpg             sugarcane_healthy               0.48
+[ 264/528] OK  named\sugarcane\mosaic\sc m1.jpg              sugarcane_mosaic                0.56
+[ 265/528] BAD named\sugarcane\mosaic\scm10.jpg              sugarcane_red_rot               0.37
+[ 266/528] OK  named\sugarcane\mosaic\scm11.jpg              sugarcane_mosaic                0.84
+[ 267/528] --  named\sugarcane\mosaic\scm12.jpg              uncertain                       0.00
+[ 268/528] OK  named\sugarcane\mosaic\scm13.jpg              sugarcane_mosaic                0.43
+[ 269/528] OK  named\sugarcane\mosaic\scm14.jpg              sugarcane_mosaic                0.38
+[ 270/528] OK  named\sugarcane\mosaic\scm15.jpg              sugarcane_mosaic                0.84
+[ 271/528] BAD named\sugarcane\mosaic\scm16.jpg              sugarcane_red_rot               0.95
+[ 272/528] --  named\sugarcane\mosaic\scm17.jpg              uncertain                       0.00
+[ 273/528] --  named\sugarcane\mosaic\scm18.jpg              uncertain                       0.00
+[ 274/528] OK  named\sugarcane\mosaic\scm19.jpg              sugarcane_mosaic                0.95
+[ 275/528] --  named\sugarcane\mosaic\scm20.jpg              uncertain                       0.00
+[ 276/528] --  named\sugarcane\mosaic\scm21.jpg              uncertain                       0.00
+[ 277/528] BAD named\sugarcane\mosaic\scm22.jpg              sugarcane_rust                  0.40
+[ 278/528] OK  named\sugarcane\mosaic\scm23.jpg              sugarcane_mosaic                0.99
+[ 279/528] BAD named\sugarcane\mosaic\scm24.jpg              sugarcane_red_rot               0.97
+[ 280/528] OK  named\sugarcane\mosaic\scm25.jpg              sugarcane_mosaic                0.58
+[ 281/528] BAD named\sugarcane\mosaic\scm3.jpg               sugarcane_rust                  0.67
+[ 282/528] BAD named\sugarcane\mosaic\scm4.jpg               sugarcane_rust                  0.56
+[ 283/528] OK  named\sugarcane\mosaic\scm5.jpg               sugarcane_mosaic                0.60
+[ 284/528] OK  named\sugarcane\mosaic\scm6.jpg               sugarcane_mosaic                0.76
+[ 285/528] BAD named\sugarcane\mosaic\scm7.jpg               sugarcane_healthy               0.76
+[ 286/528] OK  named\sugarcane\mosaic\scm8.jpg               sugarcane_mosaic                0.73
+[ 287/528] OK  named\sugarcane\mosaic\scm9.jpg               sugarcane_mosaic                0.99
+[ 288/528] OK  named\sugarcane\red rot\scrrd1.jpg            sugarcane_red_rot               0.63
+[ 289/528] --  named\sugarcane\red rot\scrrd10.jpg           uncertain                       0.00
+[ 290/528] --  named\sugarcane\red rot\scrrd11.jpg           uncertain                       0.00
+[ 291/528] OK  named\sugarcane\red rot\scrrd12.webp          sugarcane_red_rot               0.97
+[ 292/528] OK  named\sugarcane\red rot\scrrd13.jpg           sugarcane_red_rot               0.61
+[ 293/528] OK  named\sugarcane\red rot\scrrd14.jpg           sugarcane_red_rot               0.49
+[ 294/528] BAD named\sugarcane\red rot\scrrd15.jpg           sugarcane_rust                  0.47
+[ 295/528] BAD named\sugarcane\red rot\scrrd16.jpg           sugarcane_yellow_leaf           0.66
+[ 296/528] OK  named\sugarcane\red rot\scrrd17.jpg           sugarcane_red_rot               0.71
+[ 297/528] BAD named\sugarcane\red rot\scrrd18.jpg           sugarcane_rust                  0.85
+[ 298/528] OK  named\sugarcane\red rot\scrrd19.png           sugarcane_red_rot               0.99
+[ 299/528] BAD named\sugarcane\red rot\scrrd2.jpg            sugarcane_healthy               0.46
+[ 300/528] OK  named\sugarcane\red rot\scrrd21.jpg           sugarcane_red_rot               0.96
+[ 301/528] --  named\sugarcane\red rot\scrrd22.jpg           uncertain                       0.00
+[ 302/528] OK  named\sugarcane\red rot\scrrd23.jpg           sugarcane_red_rot               0.86
+[ 303/528] --  named\sugarcane\red rot\scrrd24.jpg           uncertain                       0.00
+[ 304/528] BAD named\sugarcane\red rot\scrrd25.jpg           sugarcane_rust                  0.50
+[ 305/528] OK  named\sugarcane\red rot\scrrd3.jpg            sugarcane_red_rot               0.99
+[ 306/528] OK  named\sugarcane\red rot\scrrd4.jpg            sugarcane_red_rot               0.79
+[ 307/528] BAD named\sugarcane\red rot\scrrd5.jpg            sugarcane_rust                  0.96
+[ 308/528] OK  named\sugarcane\red rot\scrrd6.jpg            sugarcane_red_rot               0.94
+[ 309/528] --  named\sugarcane\red rot\scrrd7.jpg            uncertain                       0.00
+[ 310/528] OK  named\sugarcane\red rot\scrrd8.jpg            sugarcane_red_rot               0.94
+[ 311/528] OK  named\sugarcane\red rot\scrrd9.jpg            sugarcane_red_rot               0.97
+[ 312/528] OK  named\sugarcane\rust\scr1.jpg                 sugarcane_rust                  0.55
+[ 313/528] OK  named\sugarcane\rust\scr10.jpg                sugarcane_rust                  0.91
+[ 314/528] OK  named\sugarcane\rust\scr11.jpg                sugarcane_rust                  0.96
+[ 315/528] OK  named\sugarcane\rust\scr12.jpg                sugarcane_rust                  0.94
+[ 316/528] BAD named\sugarcane\rust\scr13.jpg                sugarcane_yellow_leaf           0.39
+[ 317/528] OK  named\sugarcane\rust\scr14.jpg                sugarcane_rust                  0.57
+[ 318/528] BAD named\sugarcane\rust\scr15.jpg                sugarcane_yellow_leaf           0.39
+[ 319/528] OK  named\sugarcane\rust\scr16.png                sugarcane_rust                  0.98
+[ 320/528] OK  named\sugarcane\rust\scr17.jpg                sugarcane_rust                  0.94
+[ 321/528] BAD named\sugarcane\rust\scr18.jpg                sugarcane_red_rot               0.60
+[ 322/528] BAD named\sugarcane\rust\scr19.png                sugarcane_red_rot               0.99
+[ 323/528] OK  named\sugarcane\rust\scr2.jpg                 sugarcane_rust                  0.48
+[ 324/528] OK  named\sugarcane\rust\scr20.jpg                sugarcane_rust                  0.99
+[ 325/528] OK  named\sugarcane\rust\scr21.jpg                sugarcane_rust                  0.38
+[ 326/528] OK  named\sugarcane\rust\scr22.jpg                sugarcane_rust                  0.95
+[ 327/528] OK  named\sugarcane\rust\scr23.png                sugarcane_rust                  0.37
+[ 328/528] BAD named\sugarcane\rust\scr24.jpg                sugarcane_red_rot               0.92
+[ 329/528] OK  named\sugarcane\rust\scr25.jpg                sugarcane_rust                  0.99
+[ 330/528] OK  named\sugarcane\rust\scr3.jpg                 sugarcane_rust                  0.60
+[ 331/528] OK  named\sugarcane\rust\scr4.jpg                 sugarcane_rust                  0.96
+[ 332/528] OK  named\sugarcane\rust\scr5.jpg                 sugarcane_rust                  0.55
+[ 333/528] OK  named\sugarcane\rust\scr6.jpg                 sugarcane_rust                  0.83
+[ 334/528] OK  named\sugarcane\rust\scr7.jpg                 sugarcane_rust                  0.89
+[ 335/528] BAD named\sugarcane\rust\scr8.jpg                 sugarcane_yellow_leaf           0.67
+[ 336/528] OK  named\sugarcane\rust\scr9.jpg                 sugarcane_rust                  0.98
+[ 337/528] OK  named\sugarcane\yellow leaf\scyl1.jpg         sugarcane_yellow_leaf           0.84
+[ 338/528] BAD named\sugarcane\yellow leaf\scyl10.jpg        sugarcane_mosaic                0.41
+[ 339/528] OK  named\sugarcane\yellow leaf\scyl11.jpg        sugarcane_yellow_leaf           0.46
+[ 340/528] BAD named\sugarcane\yellow leaf\scyl12.jpg        sugarcane_rust                  0.95
+[ 341/528] BAD named\sugarcane\yellow leaf\scyl13.jpg        sugarcane_rust                  0.37
+[ 342/528] OK  named\sugarcane\yellow leaf\scyl14.jpg        sugarcane_yellow_leaf           0.36
+[ 343/528] OK  named\sugarcane\yellow leaf\scyl15.jpg        sugarcane_yellow_leaf           0.61
+[ 344/528] BAD named\sugarcane\yellow leaf\scyl16.jpg        sugarcane_red_rot               0.48
+[ 345/528] OK  named\sugarcane\yellow leaf\scyl17.jpg        sugarcane_yellow_leaf           0.48
+[ 346/528] OK  named\sugarcane\yellow leaf\scyl18.jpg        sugarcane_yellow_leaf           0.84
+[ 347/528] OK  named\sugarcane\yellow leaf\scyl19.jpg        sugarcane_yellow_leaf           0.94
+[ 348/528] BAD named\sugarcane\yellow leaf\scyl2.jpg         sugarcane_red_rot               0.49
+[ 349/528] BAD named\sugarcane\yellow leaf\scyl20.jpg        sugarcane_red_rot               0.97
+[ 350/528] OK  named\sugarcane\yellow leaf\scyl21.jpg        sugarcane_yellow_leaf           0.84
+[ 351/528] OK  named\sugarcane\yellow leaf\scyl22.jpg        sugarcane_yellow_leaf           0.94
+[ 352/528] OK  named\sugarcane\yellow leaf\scyl23.jpg        sugarcane_yellow_leaf           0.63
+[ 353/528] OK  named\sugarcane\yellow leaf\scyl24.jpg        sugarcane_yellow_leaf           0.55
+[ 354/528] OK  named\sugarcane\yellow leaf\scyl25.jpg        sugarcane_yellow_leaf           0.61
+[ 355/528] OK  named\sugarcane\yellow leaf\scyl3.jpg         sugarcane_yellow_leaf           0.35
+[ 356/528] --  named\sugarcane\yellow leaf\scyl5.jpg         uncertain                       0.00
+[ 357/528] BAD named\sugarcane\yellow leaf\scyl6.jpg         sugarcane_red_rot               0.99
+[ 358/528] OK  named\sugarcane\yellow leaf\scyl7.jpg         sugarcane_yellow_leaf           0.94
+[ 359/528] OK  named\sugarcane\yellow leaf\scyl8.jpg         sugarcane_yellow_leaf           0.94
+[ 360/528] --  named\sugarcane\yellow leaf\scyl9.jpg         uncertain                       0.00
+[ 361/528] BAD named\tomato\bacterial spot\tbs1.jpg          tomato_septoria_leaf_spot       0.89
+[ 362/528] BAD named\tomato\bacterial spot\tbs10.jpg         tomato_septoria_leaf_spot       0.84
+[ 363/528] --  named\tomato\bacterial spot\tbs11.jpg         uncertain                       0.00
+[ 364/528] OK  named\tomato\bacterial spot\tbs12.jpg         tomato_bacterial_spot           0.71
+[ 365/528] OK  named\tomato\bacterial spot\tbs2.jpg          tomato_bacterial_spot           0.41
+[ 366/528] BAD named\tomato\bacterial spot\tbs3.jpg          tomato_healthy                  0.58
+[ 367/528] BAD named\tomato\bacterial spot\tbs4.jpg          tomato_septoria_leaf_spot       0.95
+[ 368/528] BAD named\tomato\bacterial spot\tbs5.jpg          tomato_septoria_leaf_spot       0.96
+[ 369/528] BAD named\tomato\bacterial spot\tbs6.jpg          tomato_septoria_leaf_spot       0.86
+[ 370/528] BAD named\tomato\bacterial spot\tbs7.jpg          tomato_septoria_leaf_spot       0.75
+[ 371/528] BAD named\tomato\bacterial spot\tbs8.jpg          tomato_septoria_leaf_spot       0.45
+[ 372/528] --  named\tomato\bacterial spot\tbs9.jpg          uncertain                       0.00
+[ 373/528] BAD named\tomato\early blight\teb1.jpg            tomato_septoria_leaf_spot       0.82
+[ 374/528] --  named\tomato\early blight\teb10.jpg           uncertain                       0.00
+[ 375/528] BAD named\tomato\early blight\teb2.jpg            tomato_septoria_leaf_spot       0.78
+[ 376/528] BAD named\tomato\early blight\teb3.jpeg           tomato_septoria_leaf_spot       0.73
+[ 377/528] OK  named\tomato\early blight\teb4.jpg            tomato_early_blight             0.98
+[ 378/528] --  named\tomato\early blight\teb5.jpg            uncertain                       0.00
+[ 379/528] OK  named\tomato\early blight\teb6.jpg            tomato_early_blight             0.99
+[ 380/528] BAD named\tomato\early blight\teb7.jpg            tomato_late_blight              0.85
+[ 381/528] OK  named\tomato\early blight\teb8.jpg            tomato_early_blight             0.68
+[ 382/528] OK  named\tomato\early blight\teb9.jpg            tomato_early_blight             0.95
+[ 383/528] BAD named\tomato\late blight\tlb1.jpg             tomato_early_blight             0.59
+[ 384/528] OK  named\tomato\late blight\tlb10.jpg            tomato_late_blight              0.85
+[ 385/528] BAD named\tomato\late blight\tlb2.jpg             tomato_septoria_leaf_spot       0.78
+[ 386/528] OK  named\tomato\late blight\tlb3.jpg             tomato_late_blight              0.55
+[ 387/528] OK  named\tomato\late blight\tlb4.jpg             tomato_late_blight              0.83
+[ 388/528] BAD named\tomato\late blight\tlb5.jpg             tomato_healthy                  0.46
+[ 389/528] OK  named\tomato\late blight\tlb6.jpg             tomato_late_blight              0.96
+[ 390/528] OK  named\tomato\late blight\tlb7.jpg             tomato_late_blight              0.96
+[ 391/528] OK  named\tomato\late blight\tlb8.jpg             tomato_late_blight              0.99
+[ 392/528] OK  named\tomato\late blight\tlb9.jpg             tomato_late_blight              0.75
+[ 393/528] OK  named\tomato\leaf mold\tlm1.jpg               tomato_leaf_mold                0.40
+[ 394/528] OK  named\tomato\leaf mold\tlm10.jpg              tomato_leaf_mold                0.94
+[ 395/528] OK  named\tomato\leaf mold\tlm2.jpg               tomato_leaf_mold                0.84
+[ 396/528] OK  named\tomato\leaf mold\tlm3.jpg               tomato_leaf_mold                0.98
+[ 397/528] BAD named\tomato\leaf mold\tlm4.jpg               tomato_septoria_leaf_spot       0.98
+[ 398/528] OK  named\tomato\leaf mold\tlm5.jpg               tomato_leaf_mold                0.98
+[ 399/528] OK  named\tomato\leaf mold\tlm6.jpg               tomato_leaf_mold                0.96
+[ 400/528] OK  named\tomato\leaf mold\tlm7.jpg               tomato_leaf_mold                0.94
+[ 401/528] BAD named\tomato\leaf mold\tlm8.jpg               tomato_septoria_leaf_spot       0.89
+[ 402/528] OK  named\tomato\leaf mold\tlm9.jpg               tomato_leaf_mold                0.93
+[ 403/528] BAD named\tomato\mosaic virus\tmv1.jpg            tomato_septoria_leaf_spot       0.83
+[ 404/528] OK  named\tomato\mosaic virus\tmv10.jpg           tomato_mosaic_virus             0.88
+[ 405/528] BAD named\tomato\mosaic virus\tmv11.jpg           tomato_late_blight              0.81
+[ 406/528] --  named\tomato\mosaic virus\tmv12.jpg           uncertain                       0.00
+[ 407/528] --  named\tomato\mosaic virus\tmv13.jpg           uncertain                       0.00
+[ 408/528] --  named\tomato\mosaic virus\tmv2.jpg            uncertain                       0.00
+[ 409/528] OK  named\tomato\mosaic virus\tmv3.jpg            tomato_mosaic_virus             0.73
+[ 410/528] --  named\tomato\mosaic virus\tmv4.jpg            uncertain                       0.00
+[ 411/528] BAD named\tomato\mosaic virus\tmv5.jpg            tomato_healthy                  0.53
+[ 412/528] OK  named\tomato\mosaic virus\tmv6.jpg            tomato_mosaic_virus             0.68
+[ 413/528] BAD named\tomato\mosaic virus\tmv7.jpg            tomato_yellow_leaf_curl_virus   0.94
+[ 414/528] BAD named\tomato\mosaic virus\tmv8.jpg            tomato_yellow_leaf_curl_virus   0.99
+[ 415/528] OK  named\tomato\mosaic virus\tmv9.jpg            tomato_mosaic_virus             0.66
+[ 416/528] BAD named\tomato\septoria leaf spot\tsls1.jpg     tomato_early_blight             0.89
+[ 417/528] OK  named\tomato\septoria leaf spot\tsls10.jpg    tomato_septoria_leaf_spot       0.99
+[ 418/528] OK  named\tomato\septoria leaf spot\tsls2.jpg     tomato_septoria_leaf_spot       0.94
+[ 419/528] OK  named\tomato\septoria leaf spot\tsls3.jpg     tomato_septoria_leaf_spot       0.85
+[ 420/528] BAD named\tomato\septoria leaf spot\tsls4.jpg     tomato_bacterial_spot           0.76
+[ 421/528] OK  named\tomato\septoria leaf spot\tsls5.jpg     tomato_septoria_leaf_spot       0.98
+[ 422/528] OK  named\tomato\septoria leaf spot\tsls6.jpg     tomato_septoria_leaf_spot       0.94
+[ 423/528] OK  named\tomato\septoria leaf spot\tsls7.jpg     tomato_septoria_leaf_spot       0.74
+[ 424/528] OK  named\tomato\septoria leaf spot\tsls8.jpg     tomato_septoria_leaf_spot       0.99
+[ 425/528] BAD named\tomato\septoria leaf spot\tsls9.jpg     tomato_early_blight             0.90
+[ 426/528] BAD named\tomato\target spot\tts1.jpg             tomato_septoria_leaf_spot       0.67
+[ 427/528] BAD named\tomato\target spot\tts10.jpg            tomato_early_blight             0.47
+[ 428/528] BAD named\tomato\target spot\tts11.jpg            tomato_late_blight              0.66
+[ 429/528] --  named\tomato\target spot\tts12.jpg            uncertain                       0.00
+[ 430/528] BAD named\tomato\target spot\tts13.jpg            tomato_bacterial_spot           0.91
+[ 431/528] BAD named\tomato\target spot\tts2.jpg             tomato_bacterial_spot           0.91
+[ 432/528] BAD named\tomato\target spot\tts3.jpg             tomato_early_blight             0.36
+[ 433/528] --  named\tomato\target spot\tts4.jpg             uncertain                       0.00
+[ 434/528] --  named\tomato\target spot\tts5.jpg             uncertain                       0.00
+[ 435/528] BAD named\tomato\target spot\tts6.jpg             tomato_septoria_leaf_spot       0.94
+[ 436/528] BAD named\tomato\target spot\tts7.jpg             tomato_septoria_leaf_spot       0.67
+[ 437/528] BAD named\tomato\target spot\tts8.jpg             tomato_early_blight             0.38
+[ 438/528] BAD named\tomato\target spot\tts9.jpg             tomato_late_blight              0.87
+[ 439/528] OK  named\tomato\yellow leaf curl virus\tyl1.jpg  tomato_yellow_leaf_curl_virus   0.98
+[ 440/528] OK  named\tomato\yellow leaf curl virus\tyl10.jp  tomato_yellow_leaf_curl_virus   0.98
+[ 441/528] OK  named\tomato\yellow leaf curl virus\tyl2.jpg  tomato_yellow_leaf_curl_virus   0.98
+[ 442/528] OK  named\tomato\yellow leaf curl virus\tyl3.jpg  tomato_yellow_leaf_curl_virus   0.77
+[ 443/528] OK  named\tomato\yellow leaf curl virus\tyl4.jpg  tomato_yellow_leaf_curl_virus   0.94
+[ 444/528] OK  named\tomato\yellow leaf curl virus\tyl5.jpg  tomato_yellow_leaf_curl_virus   0.98
+[ 445/528] OK  named\tomato\yellow leaf curl virus\tyl6.jpg  tomato_yellow_leaf_curl_virus   0.98
+[ 446/528] OK  named\tomato\yellow leaf curl virus\tyl7.jpg  tomato_yellow_leaf_curl_virus   0.74
+[ 447/528] OK  named\tomato\yellow leaf curl virus\tyl8.jpg  tomato_yellow_leaf_curl_virus   0.95
+[ 448/528] OK  named\tomato\yellow leaf curl virus\tyl9.jpg  tomato_yellow_leaf_curl_virus   0.98
+[ 449/528] BAD named\wheat\black point\wbp1.jpg              wheat_septoria                  0.55
+[ 450/528] --  named\wheat\black point\wbp10.jpg             uncertain                       0.00
+[ 451/528] --  named\wheat\black point\wbp2.jpg              uncertain                       0.00
+[ 452/528] BAD named\wheat\black point\wbp3.jpg              wheat_healthy                   0.39
+[ 453/528] --  named\wheat\black point\wbp4.jpg              uncertain                       0.00
+[ 454/528] --  named\wheat\black point\wbp5.jpg              uncertain                       0.00
+[ 455/528] --  named\wheat\black point\wbp6.jpg              uncertain                       0.00
+[ 456/528] --  named\wheat\black point\wbp7.jpg              uncertain                       0.00
+[ 457/528] --  named\wheat\black point\wbp8.jpg              uncertain                       0.00
+[ 458/528] --  named\wheat\black point\wbp9.jpg              uncertain                       0.00
+[ 459/528] BAD named\wheat\blast\wb1.jpg                     wheat_healthy                   0.95
+[ 460/528] BAD named\wheat\blast\wb10.jpg                    wheat_healthy                   0.51
+[ 461/528] OK  named\wheat\blast\wb2.jpg                     wheat_blast                     0.77
+[ 462/528] --  named\wheat\blast\wb3.jpg                     uncertain                       0.00
+[ 463/528] --  named\wheat\blast\wb4.jpg                     uncertain                       0.00
+[ 464/528] OK  named\wheat\blast\wb5.jpg                     wheat_blast                     0.69
+[ 465/528] OK  named\wheat\blast\wb6.jpg                     wheat_blast                     0.85
+[ 466/528] OK  named\wheat\blast\wb7.jpg                     wheat_blast                     0.50
+[ 467/528] OK  named\wheat\blast\wb8.jpg                     wheat_blast                     0.50
+[ 468/528] OK  named\wheat\blast\wb9.jpg                     wheat_blast                     0.43
+[ 469/528] --  named\wheat\brown rust\wbr1.jpg               uncertain                       0.00
+[ 470/528] OK  named\wheat\brown rust\wbr10.jpg              wheat_brown_rust                0.70
+[ 471/528] --  named\wheat\brown rust\wbr2.jpg               uncertain                       0.00
+[ 472/528] --  named\wheat\brown rust\wbr3.jpg               uncertain                       0.00
+[ 473/528] OK  named\wheat\brown rust\wbr4.jpg               wheat_brown_rust                0.98
+[ 474/528] OK  named\wheat\brown rust\wbr5.jpg               wheat_brown_rust                0.97
+[ 475/528] --  named\wheat\brown rust\wbr6.jpg               uncertain                       0.00
+[ 476/528] --  named\wheat\brown rust\wbr7.jpg               uncertain                       0.00
+[ 477/528] --  named\wheat\brown rust\wbr8.jpg               uncertain                       0.00
+[ 478/528] OK  named\wheat\brown rust\wbr9.jpg               wheat_brown_rust                0.97
+[ 479/528] BAD named\wheat\fusarium foot rot\wffr1.jpg       wheat_septoria                  0.45
+[ 480/528] --  named\wheat\fusarium foot rot\wffr10.jpg      uncertain                       0.00
+[ 481/528] BAD named\wheat\fusarium foot rot\wffr2.jpg       wheat_yellow_rust               0.98
+[ 482/528] BAD named\wheat\fusarium foot rot\wffr3.jpg       wheat_healthy                   0.52
+[ 483/528] --  named\wheat\fusarium foot rot\wffr4.jpg       uncertain                       0.00
+[ 484/528] BAD named\wheat\fusarium foot rot\wffr5.jpg       wheat_powdery_mildew            0.61
+[ 485/528] BAD named\wheat\fusarium foot rot\wffr6.jpg       wheat_powdery_mildew            0.53
+[ 486/528] BAD named\wheat\fusarium foot rot\wffr7.jpg       wheat_septoria                  0.37
+[ 487/528] --  named\wheat\fusarium foot rot\wffr8.jpg       uncertain                       0.00
+[ 488/528] BAD named\wheat\fusarium foot rot\wffr9.jpg       wheat_yellow_rust               0.49
+[ 489/528] BAD named\wheat\leaf blight\wlb1.jpg              wheat_yellow_rust               0.57
+[ 490/528] BAD named\wheat\leaf blight\wlb10.jpg             wheat_yellow_rust               0.99
+[ 491/528] BAD named\wheat\leaf blight\wlb2.jpg              wheat_yellow_rust               0.43
+[ 492/528] --  named\wheat\leaf blight\wlb3.jpg              uncertain                       0.00
+[ 493/528] BAD named\wheat\leaf blight\wlb4.jpg              wheat_yellow_rust               0.97
+[ 494/528] BAD named\wheat\leaf blight\wlb5.jpg              wheat_septoria                  0.61
+[ 495/528] --  named\wheat\leaf blight\wlb6.jpg              uncertain                       0.00
+[ 496/528] BAD named\wheat\leaf blight\wlb7.jpg              wheat_yellow_rust               0.43
+[ 497/528] --  named\wheat\leaf blight\wlb8.jpg              uncertain                       0.00
+[ 498/528] --  named\wheat\leaf blight\wlb9.jpg              uncertain                       0.00
+[ 499/528] --  named\wheat\powdery mildew\wpm1.jpg           uncertain                       0.00
+[ 500/528] BAD named\wheat\powdery mildew\wpm10.jpg          wheat_septoria                  0.44
+[ 501/528] BAD named\wheat\powdery mildew\wpm2.jpg           wheat_blast                     0.39
+[ 502/528] OK  named\wheat\powdery mildew\wpm3.jpg           wheat_powdery_mildew            0.95
+[ 503/528] BAD named\wheat\powdery mildew\wpm4.jpg           wheat_healthy                   0.87
+[ 504/528] OK  named\wheat\powdery mildew\wpm5.jpg           wheat_powdery_mildew            0.73
+[ 505/528] BAD named\wheat\powdery mildew\wpm6.jpg           wheat_septoria                  0.44
+[ 506/528] --  named\wheat\powdery mildew\wpm7.jpg           uncertain                       0.00
+[ 507/528] --  named\wheat\powdery mildew\wpm8.jpg           uncertain                       0.00
+[ 508/528] OK  named\wheat\powdery mildew\wpm9.jpg           wheat_powdery_mildew            0.70
+[ 509/528] OK  named\wheat\septoria\ws1.jpg                  wheat_septoria                  0.76
+[ 510/528] --  named\wheat\septoria\ws10.jpg                 uncertain                       0.00
+[ 511/528] BAD named\wheat\septoria\ws2.jpg                  wheat_yellow_rust               0.89
+[ 512/528] OK  named\wheat\septoria\ws3.jpg                  wheat_septoria                  0.98
+[ 513/528] --  named\wheat\septoria\ws4.jpg                  uncertain                       0.00
+[ 514/528] OK  named\wheat\septoria\ws5.jpg                  wheat_septoria                  0.98
+[ 515/528] --  named\wheat\septoria\ws6.jpg                  uncertain                       0.00
+[ 516/528] OK  named\wheat\septoria\ws7.jpg                  wheat_septoria                  0.99
+[ 517/528] OK  named\wheat\septoria\ws8.jpg                  wheat_septoria                  0.75
+[ 518/528] --  named\wheat\septoria\ws9.jpg                  uncertain                       0.00
+[ 519/528] OK  named\wheat\yellow rust\wyr1.jpg              wheat_yellow_rust               0.99
+[ 520/528] BAD named\wheat\yellow rust\wyr10.jpg             wheat_brown_rust                0.87
+[ 521/528] OK  named\wheat\yellow rust\wyr2.jpg              wheat_yellow_rust               0.65
+[ 522/528] --  named\wheat\yellow rust\wyr3.jpg              uncertain                       0.00
+[ 523/528] BAD named\wheat\yellow rust\wyr4.jpg              wheat_brown_rust                0.99
+[ 524/528] --  named\wheat\yellow rust\wyr5.jpg              uncertain                       0.00
+[ 525/528] --  named\wheat\yellow rust\wyr6.jpg              uncertain                       0.00
+[ 526/528] OK  named\wheat\yellow rust\wyr7.jpg              wheat_yellow_rust               0.82
+[ 527/528] OK  named\wheat\yellow rust\wyr8.jpg              wheat_yellow_rust               0.72
+[ 528/528] OK  named\wheat\yellow rust\wyr9.jpg              wheat_yellow_rust               0.91
+
+==============================================================================
+RESULTS
+==============================================================================
+  images            528
+  scored            528   (ground truth found in the path)
+  unscored          0   (excluded from every figure below)
+  errors            0
+
+  coverage           85.8%   (453/528 answered rather than 'uncertain')
+  precision          63.1%   (286/453 of the answers given were right)   <-- the one that matters
+  recall             54.2%   (286/528 of all photos answered correctly)
+
+  top-3 hit rate     80.9%   (true class anywhere in top3)
+  crop detection     61.6%   (detected_crop == true crop)
+
+  CONFIDENTLY WRONG 167 photo(s) -- status 'ok' but the wrong class.
+  These are the failures that reach a farmer as fact:
+    1.00  potato_early_blight              -> potato_late_blight
+    0.99  maize_gray_leaf_spot             -> maize_northern_leaf_blight
+    0.99  potato_early_blight              -> potato_late_blight
+    0.99  wheat_yellow_rust                -> wheat_brown_rust
+    0.99  sugarcane_rust                   -> sugarcane_red_rot
+    0.99  wheat_leaf_blight                -> wheat_yellow_rust
+    0.99  sugarcane_yellow_leaf            -> sugarcane_red_rot
+    0.99  maize_gray_leaf_spot             -> maize_northern_leaf_blight
+    0.99  maize_gray_leaf_spot             -> maize_common_rust
+    0.99  maize_gray_leaf_spot             -> maize_common_rust
+    0.99  tomato_mosaic_virus              -> tomato_yellow_leaf_curl_virus
+    0.98  potato_early_blight              -> potato_late_blight
+    ... and 155 more, see the CSV
+
+  abstained on 75 photo(s); most common reasons:
+      72  (low confidence)
+       1  OVEREXPOSED
+       1  LOW_LIGHT
+       1  BLURRY_IMAGE
+
+  class                                n  answered  right  precision
+  ----------------------------------------------------------------
+  rice_bacterial_blight               25        16      0       0.0%
+  tomato_target_spot                  13        10      0       0.0%
+  wheat_black_point                   10         2      0       0.0%
+  wheat_fusarium_foot_rot             10         7      0       0.0%
+  wheat_leaf_blight                   10         6      0       0.0%
+  tomato_bacterial_spot               12        10      2      20.0%
+  maize_gray_leaf_spot                24        24      6      25.0%
+  rice_leaf_scald                     10         7      2      28.6%
+  rice_leaf_blast                     10        10      3      30.0%
+  wheat_powdery_mildew                10         7      3      42.9%
+  tomato_mosaic_virus                 13         9      4      44.4%
+  tomato_early_blight                 10         8      4      50.0%
+  sugarcane_mosaic                    25        20     12      60.0%
+  cotton_curl_virus                   25        22     14      63.6%
+  rice_brown_spot                     10         9      6      66.7%
+  potato_early_blight                 25        25     17      68.0%
+  cotton_bacterial_blight             25        22     15      68.2%
+  sugarcane_yellow_leaf               24        22     15      68.2%
+  sugarcane_red_rot                   24        19     13      68.4%
+  tomato_late_blight                  10        10      7      70.0%
+  tomato_septoria_leaf_spot           10        10      7      70.0%
+  wheat_yellow_rust                   10         7      5      71.4%
+  wheat_blast                         10         8      6      75.0%
+  sugarcane_rust                      25        25     19      76.0%
+  rice_sheath_blight                  10        10      8      80.0%
+  tomato_leaf_mold                    10        10      8      80.0%
+  wheat_septoria                      10         6      5      83.3%
+  potato_late_blight                  23        23     20      87.0%
+  cotton_leaf_redding                 25        25     23      92.0%
+  maize_common_rust                   25        25     24      96.0%
+  maize_northern_leaf_blight          25        25     24      96.0%
+  tomato_yellow_leaf_curl_virus       10        10     10     100.0%
+  wheat_brown_rust                    10         4      4     100.0%
+
+  Sample size is 528. A percentage from 528 photos has a margin of roughly +/-4
+  points, so treat small differences between runs as noise.
+
+wrote test_results/t035_crop_suppressed.csv and test_results/t035_crop_suppressed.json

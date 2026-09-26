@@ -72,6 +72,19 @@ class GreenGuardPredictor:
         self.min_brightness = float(q.get("min_brightness", 35.0))
         self.max_brightness = float(q.get("max_brightness", 230.0))
 
+        # Classes the model can output but that must never be reported. Black point
+        # affects the grain and fusarium foot rot the stem base, so neither is visible
+        # on a leaf: the model could only ever be guessing, and those guesses were
+        # absorbing photos belonging to the seven wheat diseases that ARE leaf-visible
+        # (measured: wheat top-1 33.3% -> 41.7% once they are suppressed).
+        # Suppressing costs nothing at serving time and needs no retraining.
+        suppressed = set(self.cfg.get("suppressed_classes", []))
+        unknown = suppressed - set(self.labels)
+        if unknown:
+            raise ValueError(f"suppressed_classes names unknown labels: {sorted(unknown)}")
+        self.suppressed = np.array([i for i, l in enumerate(self.labels) if l in suppressed], dtype=int)
+        self.num_reportable = len(self.labels) - len(self.suppressed)
+
         # Class metadata
         self.class_crop = [l.split("_", 1)[0] for l in self.labels]
         self.class_disease = [l.split("_", 1)[1] for l in self.labels]
@@ -103,9 +116,19 @@ class GreenGuardPredictor:
         return d
 
     def classes(self):
-        return {"model_version": self.version, "num_classes": len(self.labels),
+        """Only classes the service can actually return.
+
+        Suppressed ones are left out deliberately: listing a disease that can never
+        come back would have the frontend build a picker, and treatment advice, for
+        an answer no farmer will ever receive.
+        """
+        hidden = set(self.suppressed.tolist())
+        listed = {c: [i for i in self.crop_idx[c] if i not in hidden] for c in self.crops}
+        return {"model_version": self.version,
+                "num_classes": self.num_reportable,
                 "crops": [{"id": c, "name": c.title(),
-                           "classes": [self.class_info(i) for i in self.crop_idx[c]]} for c in self.crops]}
+                           "classes": [self.class_info(i) for i in listed[c]]}
+                          for c in self.crops if listed[c]]}
 
     def normalize_crop(self, crop):
         if crop is None:
@@ -194,7 +217,13 @@ class GreenGuardPredictor:
         return x.transpose(2, 0, 1)[None].astype(np.float32)   # (1, 3, H, W)
 
     def probs_from_image(self, im):
-        return self.session.run(None, {self.input_name: self.to_tensor(im)})[0][0].astype(np.float64)
+        probs = self.session.run(None, {self.input_name: self.to_tensor(im)})[0][0].astype(np.float64)
+        if len(self.suppressed):
+            # Zero then renormalise, so what is left is still a probability
+            # distribution and crop_mass keeps its meaning downstream.
+            probs[self.suppressed] = 0.0
+            probs /= max(probs.sum(), 1e-12)
+        return probs
 
     # ---------- full prediction ----------
     def predict(self, data: bytes, crop=None) -> dict:

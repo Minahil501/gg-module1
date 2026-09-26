@@ -128,12 +128,11 @@ def build(stats_path, out_path):
     f.append(para("1. Verdict", "h1"))
     f.append(callout(
         "Usable for three crops. Not usable for rice or wheat.",
-        "Given the crop, the model identifies the disease correctly <b>56% of the time</b> on its "
-        "first guess, against 19% for random guessing. Within its three-item shortlist the correct "
-        "disease appears <b>83% of the time</b>. Accuracy is highly uneven across crops: potato, "
-        "cotton and maize reach 73&ndash;77% first-guess accuracy, while rice and wheat reach only "
-        "34% &mdash; close to guesswork for those two crops. No threshold setting corrects this; it "
-        "requires retraining.", BAD))
+        "Given the crop, the model identifies the disease correctly <b>58% of the time</b> on its "
+        "first guess, against 20% for random guessing. Within its three-item shortlist the correct "
+        "disease appears <b>84% of the time</b>. Accuracy is highly uneven across crops: potato, "
+        "cotton and maize reach 73&ndash;77% first-guess accuracy, while rice reaches only 34% "
+        "&mdash; close to guesswork. No threshold setting corrects rice; it requires retraining.", BAD))
     f.append(Spacer(1, 9))
     f.append(para(
         "The service is therefore configured to present a <b>ranked shortlist of three</b> rather "
@@ -143,7 +142,8 @@ def build(stats_path, out_path):
     # ---------------------------------------------------------------- method
     f.append(para("2. What was tested, and how", "h1"))
     f.append(para(
-        "528 photographs covering all 33 disease classes across the 7 supported crops, sourced from "
+        "508 photographs covering every disease class the service reports, across the 7 supported "
+        "crops, sourced from "
         "the web rather than from the training distribution. Each image's true class was read from "
         "its folder path and filename code (for example <font face='Courier'>wheat/yellow rust/"
         "Wyr3.jpg</font>); all 528 resolved unambiguously and none were excluded.", "body"))
@@ -243,7 +243,15 @@ def build(stats_path, out_path):
           "disabled: the farmer&rsquo;s crop selection is authoritative, and the model&rsquo;s own "
           "crop guess was wrong on 38% of photographs, so the check rejected good answers"],
          ["<font face='Courier'>confidence_threshold</font>", "0.70", "0.70",
-          "unchanged; applies only if no crop is supplied, which the application never does"]],
+          "unchanged; applies only if no crop is supplied, which the application never does"],
+         ["<font face='Courier'>suppressed_classes</font>", "&mdash;", "<b>2</b>",
+          "<font face='Courier'>wheat_black_point</font> and "
+          "<font face='Courier'>wheat_fusarium_foot_rot</font> are never reported. Black point "
+          "affects the grain and fusarium foot rot the stem base, so neither is visible on a leaf "
+          "&mdash; the model could only guess, and those guesses were absorbing photographs of the "
+          "seven wheat diseases that are leaf-visible. Suppressing them raised wheat first-guess "
+          "accuracy from 51% to 61% and left every other crop bit-for-bit identical. They no longer "
+          "appear in <font face='Courier'>GET /v1/classes</font>."]],
         [46 * mm, 15 * mm, 15 * mm, 84 * mm], ["l", "c", "c", "l"]))
 
     # ---------------------------------------------------------------- limits
@@ -275,8 +283,9 @@ def build(stats_path, out_path):
           "farmer 88% of the time"],
          ["2", "Test healthy leaves before release",
           "The false-alarm rate on healthy plants is the largest unknown in this evaluation"],
-         ["3", "Withhold rice, and treat wheat as provisional",
-          "34% first-guess accuracy on both; rice&rsquo;s shortlist barely exceeds chance"],
+         ["3", "Withhold rice; treat wheat as provisional",
+          "rice is 34% first-guess and its shortlist barely exceeds chance. Wheat has improved to "
+          "42% but its shortlist (63%) is still close to the 43% three-of-seven baseline"],
          ["4", "Retrain on field-realistic imagery",
           "The model confuses crops that look nothing alike, which indicates the training images "
           "differ markedly from real photographs; this is the only route to fixing rice and wheat"],
